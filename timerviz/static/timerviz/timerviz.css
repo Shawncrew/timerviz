@@ -62,6 +62,59 @@
   font-size: 0.8rem;
 }
 
+/* ── Configuration panel (configure_timerviz users) ───────── */
+#tv-config-panel {
+  padding: 8px 12px;
+  border-bottom: 1px solid #30363d;
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  color: #8b949e;
+}
+
+#tv-config-panel summary {
+  cursor: pointer;
+  color: #8b949e;
+  font-size: 0.75rem;
+  user-select: none;
+  margin-bottom: 4px;
+}
+
+#tv-config-panel summary:hover { color: #c9d1d9; }
+
+#tv-region-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.tv-region-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  color: #c9d1d9;
+}
+
+.tv-region-toggle input[type="checkbox"] {
+  accent-color: #58a6ff;
+  cursor: pointer;
+}
+
+.tv-const-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: #c9d1d9;
+  cursor: pointer;
+}
+
+.tv-const-toggle-row input { accent-color: #58a6ff; cursor: pointer; }
+
+/* ── Timer list ──────────────────────────────────────────── */
 #tv-timer-list {
   flex: 1;
   overflow-y: auto;
@@ -79,32 +132,12 @@
   transition: background 0.15s, border-color 0.15s;
 }
 
-.tv-timer-card:hover {
-  background: #21262d;
-}
-
-.tv-timer-card.tv-upcoming {
-  border-left-color: #1f6feb;
-}
-
-.tv-timer-card.tv-repairing {
-  border-left-color: #da3633;
-  animation: tv-pulse 1.2s ease-in-out infinite;
-}
-
-.tv-timer-card.tv-elapsed {
-  border-left-color: #e3b341;
-  cursor: pointer;
-}
-
-.tv-timer-card.tv-elapsed:hover {
-  background: #2d2a1e;
-}
-
-.tv-timer-card.tv-confirmed {
-  border-left-color: #238636;
-  opacity: 0.65;
-}
+.tv-timer-card:hover           { background: #21262d; }
+.tv-timer-card.tv-upcoming     { border-left-color: #1f6feb; }
+.tv-timer-card.tv-repairing    { border-left-color: #da3633; animation: tv-pulse 1.2s ease-in-out infinite; }
+.tv-timer-card.tv-elapsed      { border-left-color: #e3b341; cursor: pointer; }
+.tv-timer-card.tv-elapsed:hover { background: #2d2a1e; }
+.tv-timer-card.tv-confirmed    { border-left-color: #238636; opacity: 0.65; }
 
 @keyframes tv-pulse {
   0%, 100% { opacity: 1; }
@@ -115,6 +148,25 @@
   font-weight: 600;
   font-size: 0.88rem;
   color: #e6edf3;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.tv-region-pip {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tv-obj-badge {
+  font-size: 0.68rem;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #fff;
 }
 
 .tv-card-meta {
@@ -199,28 +251,58 @@
   cursor: grab;
 }
 
-#tv-map:active {
-  cursor: grabbing;
-}
+#tv-map:active { cursor: grabbing; }
 
 /* ── SVG map elements ────────────────────────────────────── */
+
+/* Constellation hull backgrounds */
+.tv-const-hull {
+  fill-opacity: 0.07;
+  stroke-opacity: 0.25;
+  stroke-width: 1;
+}
+/* stroke matches the fill color, set in JS via style attr */
+.tv-const-hull { stroke: currentColor; }
+
+.tv-const-label {
+  font-size: 9px;
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+  opacity: 0.55;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  user-select: none;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Edges */
 .tv-edge {
   stroke: #30363d;
   stroke-width: 1;
   fill: none;
 }
 
+.tv-edge-inter {
+  stroke: #3d4450;
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+/* System nodes */
 .tv-system-node {
   stroke-width: 1.5;
-  fill: #1c2128;
+  fill: #0d1117;
 }
 
 .tv-system-node.tv-has-timer {
-  fill: #1c2128;
+  fill: #131a24;
+  stroke-width: 2.5;
 }
 
 .tv-system-label {
-  fill: #8b949e;
+  fill: #6e7681;
   font-size: 10px;
   text-anchor: middle;
   dominant-baseline: middle;
@@ -234,34 +316,25 @@
   font-weight: 600;
 }
 
-/* Timer badge group on map */
-.tv-map-timer-badge {
-  cursor: default;
-}
-
-.tv-map-badge-rect {
-  rx: 3;
-  ry: 3;
-}
-
+/* Timer badge on map */
+.tv-map-badge-rect { rx: 3; ry: 3; }
 .tv-map-badge-text {
   font-size: 8px;
   text-anchor: middle;
   dominant-baseline: middle;
-  fill: #ffffff;
+  fill: #fff;
   pointer-events: none;
   font-family: "Segoe UI", system-ui, sans-serif;
   user-select: none;
 }
 
-/* State colors on map badges */
 .tv-badge-upcoming  .tv-map-badge-rect { fill: #1f6feb; }
 .tv-badge-repairing .tv-map-badge-rect { fill: #da3633; }
 .tv-badge-elapsed   .tv-map-badge-rect { fill: #e3b341; cursor: pointer; }
 .tv-badge-confirmed .tv-map-badge-rect { display: none; }
 
-/* System node outline colors when timers present */
-.tv-node-upcoming   { stroke: #1f6feb; }
-.tv-node-repairing  { stroke: #da3633; }
-.tv-node-elapsed    { stroke: #e3b341; }
-.tv-node-confirmed  { stroke: #238636; }
+/* Timer state node outlines */
+.tv-node-upcoming   { stroke: #1f6feb !important; }
+.tv-node-repairing  { stroke: #da3633 !important; }
+.tv-node-elapsed    { stroke: #e3b341 !important; }
+.tv-node-confirmed  { stroke: #238636 !important; }

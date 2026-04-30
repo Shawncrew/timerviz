@@ -14,6 +14,7 @@
       <h5>Structure Timers</h5>
       <div id="tv-clock"></div>
     </div>
+
     <div id="tv-filter-bar">
       <label class="tv-label" for="tv-filter-objective">Objective</label>
       <select id="tv-filter-objective" class="form-select form-select-sm">
@@ -30,7 +31,19 @@
       <input id="tv-upcoming-window" type="hidden" value="{{ upcoming_window_min }}">
       {% endif %}
     </div>
+
+    {% if can_configure %}
+    <details id="tv-config-panel">
+      <summary>Display settings</summary>
+      <div id="tv-region-toggles"></div>
+      <label class="tv-const-toggle-row">
+        <input type="checkbox" id="tv-const-label-toggle"> Show constellation names
+      </label>
+    </details>
+    {% endif %}
+
     <div id="tv-timer-list"></div>
+
     <div id="tv-legend">
       <div><span class="tv-dot tv-upcoming"></span> Upcoming</div>
       <div><span class="tv-dot tv-repairing"></span> Repairing (active)</div>
@@ -38,10 +51,11 @@
       <div><span class="tv-dot tv-confirmed"></span> Confirmed repaired</div>
     </div>
   </div>
+
   <div id="tv-map-container">
     <div id="tv-map-toolbar">
-      <button id="tv-zoom-in" class="btn btn-sm btn-secondary" title="Zoom in">+</button>
-      <button id="tv-zoom-out" class="btn btn-sm btn-secondary" title="Zoom out">−</button>
+      <button id="tv-zoom-in"    class="btn btn-sm btn-secondary" title="Zoom in">+</button>
+      <button id="tv-zoom-out"   class="btn btn-sm btn-secondary" title="Zoom out">−</button>
       <button id="tv-zoom-reset" class="btn btn-sm btn-secondary" title="Reset view">⌂</button>
       <span id="tv-region-label"></span>
     </div>
