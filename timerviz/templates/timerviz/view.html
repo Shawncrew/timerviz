@@ -1,0 +1,67 @@
+{% extends "allianceauth/base-bs5.html" %}
+{% load i18n static %}
+
+{% block page_title %}Timer Visualization{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'timerviz/timerviz.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="timerviz-root">
+  <div id="tv-sidebar">
+    <div id="tv-sidebar-header">
+      <h5>Structure Timers</h5>
+      <div id="tv-clock"></div>
+    </div>
+    <div id="tv-filter-bar">
+      <label class="tv-label" for="tv-filter-objective">Objective</label>
+      <select id="tv-filter-objective" class="form-select form-select-sm">
+        <option value="">All</option>
+        <option value="Hostile">Hostile</option>
+        <option value="Friendly">Friendly</option>
+        <option value="Neutral">Neutral</option>
+      </select>
+      {% if can_configure %}
+      <label class="tv-label" for="tv-upcoming-window">Upcoming window (min)</label>
+      <input id="tv-upcoming-window" type="number" min="5" max="480" step="5"
+             value="{{ upcoming_window_min }}" class="form-control form-control-sm">
+      {% else %}
+      <input id="tv-upcoming-window" type="hidden" value="{{ upcoming_window_min }}">
+      {% endif %}
+    </div>
+    <div id="tv-timer-list"></div>
+    <div id="tv-legend">
+      <div><span class="tv-dot tv-upcoming"></span> Upcoming</div>
+      <div><span class="tv-dot tv-repairing"></span> Repairing (active)</div>
+      <div><span class="tv-dot tv-elapsed"></span> Click to confirm</div>
+      <div><span class="tv-dot tv-confirmed"></span> Confirmed repaired</div>
+    </div>
+  </div>
+  <div id="tv-map-container">
+    <div id="tv-map-toolbar">
+      <button id="tv-zoom-in" class="btn btn-sm btn-secondary" title="Zoom in">+</button>
+      <button id="tv-zoom-out" class="btn btn-sm btn-secondary" title="Zoom out">−</button>
+      <button id="tv-zoom-reset" class="btn btn-sm btn-secondary" title="Reset view">⌂</button>
+      <span id="tv-region-label"></span>
+    </div>
+    <svg id="tv-map" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_javascript %}
+<script>
+  window.TIMERVIZ_CONFIG = {
+    timerDataUrl: "{% url 'timerviz:timer_data' %}",
+    confirmRepairUrlTemplate: "{% url 'timerviz:confirm_repair' timer_id=0 %}".replace("/0/", "/{id}/"),
+    upcomingWindowMin: {{ upcoming_window_min }},
+    repairWindowMin: {{ repair_window_min }},
+    csrfToken: "{{ csrf_token }}",
+    mapDataUrl: "{% static 'timerviz/map-data.json' %}",
+    canConfirm: {{ can_confirm|yesno:"true,false" }},
+    canConfigure: {{ can_configure|yesno:"true,false" }},
+  };
+</script>
+<script type="module" src="{% static 'timerviz/timerviz.js' %}"></script>
+{% endblock %}

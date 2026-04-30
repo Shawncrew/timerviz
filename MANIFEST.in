@@ -1,0 +1,2 @@
+recursive-include timerviz/templates *
+recursive-include timerviz/static *
