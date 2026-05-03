@@ -21,6 +21,7 @@ let customPositions   = {};
 let upcomingWindowMin = CFG.upcomingWindowMin;
 let filterObjective   = "";
 let hiddenRegions     = new Set(JSON.parse(localStorage.getItem("tv-hidden-regions") || "[]"));
+let spreadFactor      = parseFloat(localStorage.getItem("tv-spread") || "1.0");
 
 // Interaction state machine — one of: null | pan | selBox | singleDrag | groupDrag
 let ix = null;
@@ -34,6 +35,12 @@ let selectedIds    = new Set(); // selected system IDs
 async function boot() {
   mapData = await fetch(CFG.mapDataUrl).then((r) => r.json());
 
+  // Store original base positions before any adjustments
+  for (const sys of mapData.systems) {
+    sys.baseNx = sys.nx;
+    sys.baseNy = sys.ny;
+  }
+
   if (CFG.positionsUrl) {
     try {
       const pd = await fetch(CFG.positionsUrl).then((r) => r.json());
@@ -44,6 +51,7 @@ async function boot() {
   }
 
   applyCustomPositions();
+  applySpread();
   buildMap();
   await fetchTimers();
   setInterval(fetchTimers, POLL_MS);
@@ -59,6 +67,37 @@ function applyCustomPositions() {
       sys.ny = customPositions[sys.name].ny;
     }
   }
+}
+
+function applySpread() {
+  for (const sys of mapData.systems) {
+    if (customPositions[sys.name]) continue; // custom-dragged nodes are absolute
+    sys.nx = 0.5 + (sys.baseNx - 0.5) * spreadFactor;
+    sys.ny = 0.5 + (sys.baseNy - 0.5) * spreadFactor;
+  }
+}
+
+function rebuildEdgePositions() {
+  for (const e of mapData.edges) {
+    const line = document.getElementById(`tv-edge-${e.a}-${e.b}`);
+    if (!line) continue;
+    const sA = mapData.systems.find((s) => s.id === e.a);
+    const sB = mapData.systems.find((s) => s.id === e.b);
+    if (!sA || !sB) continue;
+    line.setAttribute("x1", sA.nx * MAP_SIZE); line.setAttribute("y1", sA.ny * MAP_SIZE);
+    line.setAttribute("x2", sB.nx * MAP_SIZE); line.setAttribute("y2", sB.ny * MAP_SIZE);
+  }
+}
+
+function applySpreadAndRedraw(factor) {
+  spreadFactor = factor;
+  localStorage.setItem("tv-spread", factor);
+  applySpread();
+  for (const sys of mapData.systems) {
+    if (!customPositions[sys.name]) moveSystemNode(sys);
+  }
+  rebuildEdgePositions();
+  renderMapTimers();
 }
 
 // ── Data ─────────────────────────────────────────────────────────────────────
@@ -709,6 +748,19 @@ function initControls() {
       clToggle.addEventListener("change", () => {
         showConstLabels = clToggle.checked;
         localStorage.setItem("tv-const-labels", showConstLabels);
+      });
+    }
+
+    // Spread slider
+    const slider  = document.getElementById("tv-spread-slider");
+    const sliderLabel = document.getElementById("tv-spread-value");
+    if (slider) {
+      slider.value = spreadFactor;
+      if (sliderLabel) sliderLabel.textContent = spreadFactor.toFixed(2) + "×";
+      slider.addEventListener("input", (e) => {
+        const v = parseFloat(e.target.value);
+        if (sliderLabel) sliderLabel.textContent = v.toFixed(2) + "×";
+        applySpreadAndRedraw(v);
       });
     }
 

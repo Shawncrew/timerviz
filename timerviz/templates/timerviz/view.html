@@ -36,6 +36,11 @@
     <details id="tv-config-panel">
       <summary>Display settings</summary>
       <div id="tv-region-toggles"></div>
+      <div class="tv-spread-row mt-2">
+        <label class="tv-label">Spread: <span id="tv-spread-value"></span></label>
+        <input type="range" id="tv-spread-slider" min="0.2" max="3.0" step="0.05"
+               class="form-range form-range-sm">
+      </div>
       <div class="tv-drag-hint" id="tv-drag-hint">
         <span id="tv-drag-mode-label">Drag mode: <strong>off</strong></span>
       </div>
