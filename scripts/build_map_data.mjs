@@ -225,17 +225,24 @@ function buildLayout(systems, constellations, edges) {
     }
   }
 
-  // Step 4: center the entire layout on the canvas
+  // Step 4: scale layout to a compact cluster centered at (0.5, 0.5)
+  // TARGET_SPAN controls how much of the canvas the cluster occupies (0.0–1.0).
+  // The rest is empty drag space on all sides.
+  const TARGET_SPAN = 0.30;
+
   const allNx = allList.map((s) => s.nx), allNy = allList.map((s) => s.ny);
   const minNx = Math.min(...allNx), maxNx = Math.max(...allNx);
   const minNy = Math.min(...allNy), maxNy = Math.max(...allNy);
-  const shiftX = 0.5 - (minNx + maxNx) / 2;
-  const shiftY = 0.5 - (minNy + maxNy) / 2;
+  const spanX = maxNx - minNx || 1, spanY = maxNy - minNy || 1;
+  const span  = Math.max(spanX, spanY);   // uniform scale preserves aspect ratio
+  const scale = TARGET_SPAN / span;
+  const cxSrc = (minNx + maxNx) / 2, cySrc = (minNy + maxNy) / 2;
+
   for (const s of allList) {
-    s.nx = clamp(s.nx + shiftX, 0.01, 0.99);
-    s.ny = clamp(s.ny + shiftY, 0.01, 0.99);
+    s.nx = 0.5 + (s.nx - cxSrc) * scale;
+    s.ny = 0.5 + (s.ny - cySrc) * scale;
   }
-  console.log(`  Centered — layout spans nx:[${(minNx+shiftX).toFixed(3)}, ${(maxNx+shiftX).toFixed(3)}] ny:[${(minNy+shiftY).toFixed(3)}, ${(maxNy+shiftY).toFixed(3)}]`);
+  console.log(`  Scaled to ${(TARGET_SPAN*100).toFixed(0)}% of canvas, centered at (0.5, 0.5)`);
 
   // Step 5: recompute constellation centres
   for (const [, c] of constellations) {
