@@ -275,39 +275,25 @@
 
 /* ── SVG map elements ────────────────────────────────────── */
 
-/* Constellation hull backgrounds */
-.tv-const-hull {
-  fill-opacity: 0.07;
-  stroke-opacity: 0.25;
-  stroke-width: 1;
-}
-/* stroke matches the fill color, set in JS via style attr */
-.tv-const-hull { stroke: currentColor; }
-
-.tv-const-label {
-  font-size: 18px;
-  font-weight: 600;
-  text-anchor: middle;
-  dominant-baseline: middle;
-  pointer-events: none;
-  opacity: 0.55;
-  font-family: "Segoe UI", system-ui, sans-serif;
-  user-select: none;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
 /* Edges */
 .tv-edge {
-  stroke: #30363d;
-  stroke-width: 1;
+  stroke: #2e3440;
+  stroke-width: 2;
   fill: none;
 }
 
-.tv-edge-inter {
-  stroke: #3d4450;
-  stroke-width: 1.5;
-  stroke-dasharray: 4 3;
+/* Inter-constellation gate (same region) */
+.tv-edge-inter-const {
+  stroke: #c0392b;
+  stroke-width: 2.5;
+  stroke-opacity: 0.85;
+}
+
+/* Inter-region gate */
+.tv-edge-inter-region {
+  stroke: #8e44ad;
+  stroke-width: 3;
+  stroke-opacity: 0.9;
 }
 
 /* System nodes */

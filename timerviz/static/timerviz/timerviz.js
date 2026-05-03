@@ -21,7 +21,6 @@ let customPositions   = {};
 let upcomingWindowMin = CFG.upcomingWindowMin;
 let filterObjective   = "";
 let hiddenRegions     = new Set(JSON.parse(localStorage.getItem("tv-hidden-regions") || "[]"));
-let showConstLabels   = localStorage.getItem("tv-const-labels") !== "false";
 
 // Interaction state machine — one of: null | pan | selBox | singleDrag | groupDrag
 let ix = null;
@@ -242,18 +241,23 @@ function buildMap() {
   const regionNames = [...new Set(mapData.systems.map((s) => s.regionName))];
   document.getElementById("tv-region-label").textContent = regionNames.join(" · ");
 
-  svg.appendChild(createEl("g", { id: "tv-const-hulls" }));
-
-
   // ── Edges ───────────────────────────────────────────────────────────────────
   const edgeG = createEl("g", { id: "tv-edges" });
   for (const e of mapData.edges) {
     const sA = mapData.systems.find((s) => s.id === e.a);
     const sB = mapData.systems.find((s) => s.id === e.b);
     if (!sA || !sB) continue;
+
+    let edgeClass = "tv-edge";
+    if (sA.regionId !== sB.regionId) {
+      edgeClass = "tv-edge tv-edge-inter-region";
+    } else if (sA.constellationId !== sB.constellationId) {
+      edgeClass = "tv-edge tv-edge-inter-const";
+    }
+
     edgeG.appendChild(createEl("line", {
       id: `tv-edge-${e.a}-${e.b}`,
-      class: sA.regionId !== sB.regionId ? "tv-edge tv-edge-inter" : "tv-edge",
+      class: edgeClass,
       x1: sA.nx * MAP_SIZE, y1: sA.ny * MAP_SIZE,
       x2: sB.nx * MAP_SIZE, y2: sB.ny * MAP_SIZE,
       "data-sys-a": sA.id, "data-sys-b": sB.id,
@@ -275,7 +279,6 @@ function buildMap() {
   });
   svg.appendChild(selBox);
 
-  buildConstellationHulls(document.getElementById("tv-const-hulls"));
   applyRegionVisibility();
   initPointerHandling(svg);
   applyViewBox();
@@ -345,45 +348,6 @@ function buildSystemNode(sys) {
 
   g.appendChild(createEl("g", { id: "tv-badges-" + sys.id, class: "tv-badge-group" }));
   return g;
-}
-
-// ── Constellation hulls ───────────────────────────────────────────────────────
-
-function convexHull(pts) {
-  if (pts.length < 3) return pts;
-  pts = [...pts].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-  const cross = (O, A, B) => (A[0]-O[0])*(B[1]-O[1]) - (A[1]-O[1])*(B[0]-O[0]);
-  const lower = [], upper = [];
-  for (const p of pts) { while (lower.length >= 2 && cross(lower.at(-2), lower.at(-1), p) <= 0) lower.pop(); lower.push(p); }
-  for (const p of [...pts].reverse()) { while (upper.length >= 2 && cross(upper.at(-2), upper.at(-1), p) <= 0) upper.pop(); upper.push(p); }
-  upper.pop(); lower.pop();
-  return [...lower, ...upper];
-}
-
-function expandHull(hull, pad) {
-  const cx = hull.reduce((s, p) => s + p[0], 0) / hull.length;
-  const cy = hull.reduce((s, p) => s + p[1], 0) / hull.length;
-  return hull.map(([x, y]) => {
-    const len = Math.hypot(x - cx, y - cy) || 1;
-    return [x + ((x - cx) / len) * pad, y + ((y - cy) / len) * pad];
-  });
-}
-
-function buildConstellationHulls(hullG) {
-  hullG.innerHTML = "";
-  if (!mapData.constellations) return;
-  for (const [cidStr, c] of Object.entries(mapData.constellations)) {
-    const sids = mapData.systems.filter((s) => s.constellationId === parseInt(cidStr, 10));
-    if (sids.length < 2) continue;
-    const pts = sids.map((s) => [s.nx * MAP_SIZE, s.ny * MAP_SIZE]);
-    let hull = convexHull(pts);
-    if (hull.length < 3) hull = pts;
-    hullG.appendChild(createEl("polygon", {
-      class: "tv-const-hull", id: "tv-hull-" + cidStr,
-      points: expandHull(hull, NODE_RX + 20).map((p) => p.join(",")).join(" "),
-      "data-region": c.regionName, style: `fill:${c.color}`,
-    }));
-  }
 }
 
 // ── Map timer badges ──────────────────────────────────────────────────────────
@@ -616,14 +580,12 @@ function initPointerHandling(svg) {
       if (nodeGroup) nodeGroup.style.cursor = "";
       if (state.moved) {
         await savePosition(state.sys.name, state.sys.nx, state.sys.ny);
-        buildConstellationHulls(document.getElementById("tv-const-hulls"));
         renderMapTimers();
       }
 
     } else if (type === "groupDrag") {
       if (state.moved) {
         await savePositions(state.members.map((m) => m.sys));
-        buildConstellationHulls(document.getElementById("tv-const-hulls"));
         renderMapTimers();
       }
     }
@@ -671,9 +633,6 @@ function applyRegionVisibility() {
     const sA = mapData.systems.find((s) => s.id === parseInt(line.dataset.sysA, 10));
     const sB = mapData.systems.find((s) => s.id === parseInt(line.dataset.sysB, 10));
     line.style.display = (sA && hiddenRegions.has(sA.regionName)) && (sB && hiddenRegions.has(sB.regionName)) ? "none" : "";
-  });
-  document.querySelectorAll(".tv-const-hull, .tv-const-label").forEach((el) => {
-    el.style.display = hiddenRegions.has(el.dataset.region) ? "none" : "";
   });
 }
 
@@ -750,7 +709,6 @@ function initControls() {
       clToggle.addEventListener("change", () => {
         showConstLabels = clToggle.checked;
         localStorage.setItem("tv-const-labels", showConstLabels);
-        buildConstellationHulls(document.getElementById("tv-const-hulls"));
       });
     }
 
