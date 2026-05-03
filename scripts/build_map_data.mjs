@@ -81,7 +81,7 @@ const DOTLAN = {
 const LEFT = 0.01, RIGHT = 0.99, TOP = 0.01, BOT = 0.99;
 
 // Minimum node separation (normalised). NODE_RX=52 on 4000-unit canvas → 0.013 per unit
-const MIN_SEP    = 0.028;
+const MIN_SEP    = 0.015;
 const SEP_ITERS  = 400;
 const FD_ITERS   = 600;   // force-directed iters for unplaced Fade systems
 
@@ -225,7 +225,19 @@ function buildLayout(systems, constellations, edges) {
     }
   }
 
-  // Step 4: recompute constellation centres
+  // Step 4: center the entire layout on the canvas
+  const allNx = allList.map((s) => s.nx), allNy = allList.map((s) => s.ny);
+  const minNx = Math.min(...allNx), maxNx = Math.max(...allNx);
+  const minNy = Math.min(...allNy), maxNy = Math.max(...allNy);
+  const shiftX = 0.5 - (minNx + maxNx) / 2;
+  const shiftY = 0.5 - (minNy + maxNy) / 2;
+  for (const s of allList) {
+    s.nx = clamp(s.nx + shiftX, 0.01, 0.99);
+    s.ny = clamp(s.ny + shiftY, 0.01, 0.99);
+  }
+  console.log(`  Centered — layout spans nx:[${(minNx+shiftX).toFixed(3)}, ${(maxNx+shiftX).toFixed(3)}] ny:[${(minNy+shiftY).toFixed(3)}, ${(maxNy+shiftY).toFixed(3)}]`);
+
+  // Step 5: recompute constellation centres
   for (const [, c] of constellations) {
     const sids = c.systems.filter((id) => systems.has(id));
     if (!sids.length) continue;
