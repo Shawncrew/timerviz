@@ -327,14 +327,6 @@ function buildConstellationHulls(hullG) {
       points: expandHull(hull, NODE_RX + 20).map((p) => p.join(",")).join(" "),
       "data-region": c.regionName, style: `fill:${c.color}`,
     }));
-    if (showConstLabels) {
-      const lbl = createEl("text", {
-        class: "tv-const-label", x: c.centerNx * MAP_SIZE, y: c.centerNy * MAP_SIZE,
-        "data-region": c.regionName, style: `fill:${c.color}`,
-      });
-      lbl.textContent = c.name;
-      hullG.appendChild(lbl);
-    }
   }
 }
 
