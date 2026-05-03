@@ -81,7 +81,7 @@ const DOTLAN = {
 const LEFT = 0.01, RIGHT = 0.99, TOP = 0.01, BOT = 0.99;
 
 // Minimum node separation (normalised). NODE_RX=52 on 4000-unit canvas → 0.013 per unit
-const MIN_SEP    = 0.048;
+const MIN_SEP    = 0.028;
 const SEP_ITERS  = 400;
 const FD_ITERS   = 600;   // force-directed iters for unplaced Fade systems
 
