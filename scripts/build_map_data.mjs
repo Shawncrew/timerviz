@@ -83,7 +83,6 @@ const LEFT = 0.01, RIGHT = 0.99, TOP = 0.01, BOT = 0.99;
 // Minimum node separation (normalised). NODE_RX=52 on 4000-unit canvas → 0.013 per unit
 const MIN_SEP    = 0.015;
 const SEP_ITERS  = 400;
-const FD_ITERS   = 600;   // force-directed iters for unplaced Fade systems
 
 // ── Cache ─────────────────────────────────────────────────────────────────────
 let cache = existsSync(CACHE_FILE) ? JSON.parse(readFileSync(CACHE_FILE, "utf8")) : {};
@@ -149,11 +148,11 @@ function buildLayout(systems, constellations, edges) {
   }
   console.log(`  Placed ${placed.size} systems from Dotlan coordinates.`);
 
-  // Step 2: force-directed placement for unplaced Fade systems
+  // Step 2: greedy crossing-minimizing placement for unplaced Fade systems
   const unplaced = [...systems.values()].filter((s) => !placed.has(s.id));
-  console.log(`  Force-directing ${unplaced.length} unplaced Fade systems…`);
+  console.log(`  Placing ${unplaced.length} unplaced Fade systems (crossing-minimizing)…`);
 
-  // Build adjacency from edge set
+  // Build adjacency
   const adj = new Map();
   for (const e of edges) {
     const [a, b] = e.split("-").map(Number);
@@ -161,46 +160,100 @@ function buildLayout(systems, constellations, edges) {
     adj.get(a).push(b); adj.get(b).push(a);
   }
 
-  // Initial placement: average of placed neighbours, shifted slightly left
-  for (const s of unplaced) {
-    const nbrs = (adj.get(s.id) || []).filter((id) => placed.has(id));
-    if (nbrs.length) {
-      s.nx = clamp(nbrs.reduce((sum, id) => sum + systems.get(id).nx, 0) / nbrs.length - 0.06, LEFT, RIGHT);
-      s.ny = clamp(nbrs.reduce((sum, id) => sum + systems.get(id).ny, 0) / nbrs.length,        TOP,  BOT);
-    } else {
-      s.nx = LEFT + canW * 0.1;
-      s.ny = TOP  + canH * 0.5;
+  // Segment intersection test (excludes shared endpoints)
+  function segsIntersect(ax, ay, bx, by, cx, cy, dx, dy) {
+    const d1x = bx-ax, d1y = by-ay, d2x = dx-cx, d2y = dy-cy;
+    const denom = d1x*d2y - d1y*d2x;
+    if (Math.abs(denom) < 1e-12) return false;
+    const t = ((cx-ax)*d2y - (cy-ay)*d2x) / denom;
+    const u = ((cx-ax)*d1y - (cy-ay)*d1x) / denom;
+    return t > 0.02 && t < 0.98 && u > 0.02 && u < 0.98;
+  }
+
+  // Live list of placed edges (updated as we place each system)
+  const placedEdges = [];
+  for (const e of edges) {
+    const [a, b] = e.split("-").map(Number);
+    if (placed.has(a) && placed.has(b)) {
+      const sA = systems.get(a), sB = systems.get(b);
+      placedEdges.push([sA.nx, sA.ny, sB.nx, sB.ny]);
     }
+  }
+
+  // Candidate ring: 6 distances × 24 angles = 144 candidates per system
+  const DISTS  = [0.035, 0.055, 0.075, 0.10, 0.13, 0.17];
+  const ANGLES = Array.from({ length: 24 }, (_, i) => (i / 24) * 2 * Math.PI);
+
+  // Sort by most placed neighbours first; re-sort each pass so newly placed nodes help later systems
+  for (let pass = 0; pass < 4; pass++) {
+    let placedThisPass = 0;
+    const remaining = unplaced.filter((s) => !placed.has(s.id));
+    remaining.sort((a, b) => {
+      const an = (adj.get(a.id)||[]).filter(id => placed.has(id)).length;
+      const bn = (adj.get(b.id)||[]).filter(id => placed.has(id)).length;
+      return bn - an;
+    });
+
+    for (const sys of remaining) {
+      const nbrs = (adj.get(sys.id)||[])
+        .filter(id => placed.has(id))
+        .map(id => systems.get(id));
+
+      if (nbrs.length === 0 && pass < 3) continue; // wait for neighbours to be placed
+
+      // Anchor = average of placed neighbours (or rough fallback)
+      const anchor = nbrs.length
+        ? { nx: nbrs.reduce((s,n)=>s+n.nx,0)/nbrs.length,
+            ny: nbrs.reduce((s,n)=>s+n.ny,0)/nbrs.length }
+        : { nx: LEFT + canW * 0.05, ny: TOP + canH * 0.5 };
+
+      // Generate & score candidates
+      let best = null, bestScore = Infinity;
+      for (const dist of DISTS) {
+        for (const angle of ANGLES) {
+          const cnx = clamp(anchor.nx + Math.cos(angle)*dist, LEFT+0.01, RIGHT-0.01);
+          const cny = clamp(anchor.ny + Math.sin(angle)*dist, TOP+0.01,  BOT-0.01);
+
+          // Skip if too close to any placed node
+          let tooClose = false;
+          for (const [, s] of systems) {
+            if (!placed.has(s.id)) continue;
+            if (Math.hypot(cnx-s.nx, cny-s.ny) < MIN_SEP) { tooClose = true; break; }
+          }
+          if (tooClose) continue;
+
+          // Count edge crossings introduced by placing sys here
+          let crossings = 0;
+          for (const nbr of nbrs) {
+            for (const [ex1,ey1,ex2,ey2] of placedEdges) {
+              if (segsIntersect(cnx,cny,nbr.nx,nbr.ny, ex1,ey1,ex2,ey2)) crossings++;
+            }
+          }
+
+          // Prefer extending left (Fade is west of Pure Blind)
+          const leftBias = (anchor.nx - cnx) * 3;
+          const score = crossings * 1000 - leftBias + dist * 5;
+          if (score < bestScore) { bestScore = score; best = { nx: cnx, ny: cny }; }
+        }
+      }
+
+      if (!best) {
+        // Fallback: just place at anchor shifted left, ignore spacing
+        best = { nx: clamp(anchor.nx - 0.05, LEFT, RIGHT), ny: anchor.ny };
+      }
+
+      sys.nx = best.nx; sys.ny = best.ny;
+      placed.add(sys.id);
+      placedThisPass++;
+
+      // Register new edges for future crossing checks
+      for (const nbr of nbrs) placedEdges.push([sys.nx, sys.ny, nbr.nx, nbr.ny]);
+    }
+    console.log(`    Pass ${pass+1}: placed ${placedThisPass}`);
+    if ([...unplaced].every(s => placed.has(s.id))) break;
   }
 
   const allList = [...systems.values()];
-
-  for (let iter = 0; iter < FD_ITERS; iter++) {
-    const cool = 1 - iter / FD_ITERS * 0.5; // annealing
-    for (const s of unplaced) {
-      // Attract toward placed neighbours via gate edges
-      const nbrs = adj.get(s.id) || [];
-      for (const nid of nbrs) {
-        const n = systems.get(nid); if (!n) continue;
-        const dx = n.nx - s.nx, dy = n.ny - s.ny;
-        const d = Math.hypot(dx, dy) || 1e-9;
-        const rest = 0.07, f = 0.008 * (d - rest) * cool;
-        s.nx += (dx / d) * f; s.ny += (dy / d) * f;
-      }
-      // Repel from all other nodes
-      for (const other of allList) {
-        if (other.id === s.id) continue;
-        const dx = s.nx - other.nx, dy = s.ny - other.ny;
-        const d = Math.hypot(dx, dy) || 1e-9;
-        if (d < 0.15) {
-          const push = 0.0004 * cool / (d * d);
-          s.nx += (dx / d) * push; s.ny += (dy / d) * push;
-        }
-      }
-      s.nx = clamp(s.nx, LEFT, RIGHT);
-      s.ny = clamp(s.ny, TOP, BOT);
-    }
-  }
 
   // Step 3: global separation — push ALL node pairs apart if overlapping
   console.log(`  Running ${SEP_ITERS} separation iterations…`);
