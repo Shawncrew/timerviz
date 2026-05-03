@@ -8,4 +8,6 @@ urlpatterns = [
     path("", views.TimervizView.as_view(), name="view"),
     path("api/timers/", views.TimerDataView.as_view(), name="timer_data"),
     path("api/confirm/<int:timer_id>/", views.ConfirmRepairView.as_view(), name="confirm_repair"),
+    path("api/positions/", views.SystemPositionsView.as_view(), name="positions"),
+    path("api/positions/reset/", views.ResetSystemPositionsView.as_view(), name="positions_reset"),
 ]

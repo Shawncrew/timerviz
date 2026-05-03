@@ -15,22 +15,40 @@ const POLL_MS   = 10_000;
 
 // ── State ────────────────────────────────────────────────────────────────────
 
-let timers           = [];
-let mapData          = null;
+let timers            = [];
+let mapData           = null;
+let customPositions   = {};   // system_name -> {nx, ny} — overrides from DB
 let upcomingWindowMin = CFG.upcomingWindowMin;
-let filterObjective  = "";
-let hiddenRegions    = new Set(JSON.parse(localStorage.getItem("tv-hidden-regions") || "[]"));
-let showConstLabels  = localStorage.getItem("tv-const-labels") !== "false";
+let filterObjective   = "";
+let hiddenRegions     = new Set(JSON.parse(localStorage.getItem("tv-hidden-regions") || "[]"));
+let showConstLabels   = localStorage.getItem("tv-const-labels") !== "false";
 
-// viewBox pan/zoom
+// Map pan/zoom
 let vb        = { x: 0, y: 0, w: MAP_SIZE, h: MAP_SIZE };
 let isPanning = false;
 let panStart  = null;
+
+// Node dragging (configure_timerviz only)
+let dragState = null;  // { sysId, sysName, startSvgX, startSvgY, origNx, origNy, moved }
 
 // ── Boot ─────────────────────────────────────────────────────────────────────
 
 async function boot() {
   mapData = await fetch(CFG.mapDataUrl).then((r) => r.json());
+
+  // Load any saved custom positions from the server
+  if (CFG.positionsUrl) {
+    try {
+      const pd = await fetch(CFG.positionsUrl).then((r) => r.json());
+      customPositions = pd.positions || {};
+    } catch (e) {
+      console.warn("timerviz: could not load positions", e);
+    }
+  }
+
+  // Apply custom positions to mapData before building
+  applyCustomPositions();
+
   buildMap();
   await fetchTimers();
   setInterval(fetchTimers, POLL_MS);
@@ -39,12 +57,21 @@ async function boot() {
   initControls();
 }
 
+function applyCustomPositions() {
+  for (const sys of mapData.systems) {
+    if (customPositions[sys.name]) {
+      sys.nx = customPositions[sys.name].nx;
+      sys.ny = customPositions[sys.name].ny;
+    }
+  }
+}
+
 // ── Data ─────────────────────────────────────────────────────────────────────
 
 async function fetchTimers() {
   try {
     const data = await fetch(CFG.timerDataUrl).then((r) => r.json());
-    timers           = data.timers;
+    timers            = data.timers;
     upcomingWindowMin = data.upcoming_window_min;
     document.getElementById("tv-upcoming-window").value = upcomingWindowMin;
     render();
@@ -60,6 +87,37 @@ async function confirmRepair(timerId) {
     await fetchTimers();
   } catch (e) {
     console.error("timerviz: confirm repair failed", e);
+  }
+}
+
+async function savePosition(systemName, nx, ny) {
+  try {
+    await fetch(CFG.positionsUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-CSRFToken": CFG.csrfToken },
+      body: JSON.stringify({ system_name: systemName, nx, ny }),
+    });
+    customPositions[systemName] = { nx, ny };
+  } catch (e) {
+    console.error("timerviz: save position failed", e);
+  }
+}
+
+async function resetAllPositions() {
+  try {
+    await fetch(CFG.positionsResetUrl, {
+      method: "POST",
+      headers: { "X-CSRFToken": CFG.csrfToken },
+      body: JSON.stringify({}),
+    });
+    customPositions = {};
+    // Reload map-data to get default positions
+    mapData = await fetch(CFG.mapDataUrl).then((r) => r.json());
+    document.getElementById("tv-map").innerHTML = "";
+    buildMap();
+    renderMapTimers();
+  } catch (e) {
+    console.error("timerviz: reset positions failed", e);
   }
 }
 
@@ -79,21 +137,19 @@ function timerState(t, now) {
 
 function countdownText(t, now) {
   if (t.confirmed) return "Confirmed";
-  const fireMs = new Date(t.eve_time).getTime();
-  const diff   = fireMs - now;
-  if (diff > 0)           return "T-" + fmtDuration(diff);
+  const diff = new Date(t.eve_time).getTime() - now;
+  if (diff > 0) return "T-" + fmtDuration(diff);
   const since = -diff;
-  if (since < REPAIR_MS)  return "Repairing " + fmtDuration(REPAIR_MS - since);
+  if (since < REPAIR_MS) return "Repairing " + fmtDuration(REPAIR_MS - since);
   return "Awaiting confirmation";
 }
 
 function shortCountdown(t, now) {
   if (t.confirmed) return "✓";
-  const fireMs = new Date(t.eve_time).getTime();
-  const diff   = fireMs - now;
-  if (diff > 0)                     return "T-" + shortDur(diff);
+  const diff = new Date(t.eve_time).getTime() - now;
+  if (diff > 0) return "T-" + shortDur(diff);
   const since = -diff;
-  if (since < REPAIR_MS)            return "Rep " + shortDur(REPAIR_MS - since);
+  if (since < REPAIR_MS) return "Rep " + shortDur(REPAIR_MS - since);
   return "Confirm";
 }
 
@@ -114,7 +170,7 @@ function shortDur(ms) {
 
 function pad2(n) { return String(n).padStart(2, "0"); }
 
-// ── Tick: live countdown updates ─────────────────────────────────────────────
+// ── Tick ─────────────────────────────────────────────────────────────────────
 
 function tick() {
   const now = Date.now();
@@ -125,8 +181,7 @@ function tick() {
   document.querySelectorAll(".tv-timer-card[data-timer-id]").forEach((card) => {
     const t = timers.find((x) => x.id === parseInt(card.dataset.timerId, 10));
     if (!t) return;
-    const state = timerState(t, now);
-    card.className = "tv-timer-card tv-" + state;
+    card.className = "tv-timer-card tv-" + timerState(t, now);
     const cdEl = card.querySelector(".tv-card-countdown");
     if (cdEl) cdEl.textContent = countdownText(t, now);
   });
@@ -134,14 +189,13 @@ function tick() {
   document.querySelectorAll(".tv-map-timer-badge[data-timer-id]").forEach((g) => {
     const t = timers.find((x) => x.id === parseInt(g.dataset.timerId, 10));
     if (!t) return;
-    const state = timerState(t, now);
-    g.className.baseVal = "tv-map-timer-badge tv-badge-" + state;
+    g.className.baseVal = "tv-map-timer-badge tv-badge-" + timerState(t, now);
     const textEl = g.querySelector(".tv-map-badge-text");
     if (textEl) textEl.textContent = shortCountdown(t, now);
   });
 }
 
-// ── Full render ───────────────────────────────────────────────────────────────
+// ── Render ────────────────────────────────────────────────────────────────────
 
 function render() { renderSidebar(); renderMapTimers(); }
 
@@ -171,18 +225,17 @@ function renderSidebar() {
   for (const t of shown) {
     const state = timerState(t, now);
     const card  = document.createElement("div");
-    card.className  = "tv-timer-card tv-" + state;
+    card.className       = "tv-timer-card tv-" + state;
     card.dataset.timerId = t.id;
 
-    const sys        = mapData?.systems.find((s) => s.name === t.system);
+    const sys         = mapData?.systems.find((s) => s.name === t.system);
     const regionColor = sys?.regionColor ?? "#8b949e";
-    const objColor   = objectiveColor(t.objective);
 
     card.innerHTML = `
       <div class="tv-card-system">
         <span class="tv-region-pip" style="background:${regionColor}" title="${escHtml(sys?.regionName ?? "")}"></span>
         ${escHtml(t.system)}
-        ${t.objective ? `<span class="tv-obj-badge" style="background:${objColor}">${escHtml(t.objective)}</span>` : ""}
+        ${t.objective ? `<span class="tv-obj-badge" style="background:${objectiveColor(t.objective)}">${escHtml(t.objective)}</span>` : ""}
       </div>
       <div class="tv-card-meta">${escHtml(t.structure)}${t.timer_type ? " · " + escHtml(t.timer_type) : ""}${t.planet_moon ? " · " + escHtml(t.planet_moon) : ""}</div>
       ${t.details ? `<div class="tv-card-meta">${escHtml(t.details)}</div>` : ""}
@@ -207,60 +260,53 @@ function buildMap() {
   const svg = document.getElementById("tv-map");
   svg.setAttribute("viewBox", `0 0 ${MAP_SIZE} ${MAP_SIZE}`);
 
-  // Region label
   const regionNames = [...new Set(mapData.systems.map((s) => s.regionName))];
   document.getElementById("tv-region-label").textContent = regionNames.join(" · ");
 
-  // Constellation hull layer (drawn first, behind edges)
+  // Layer: constellation hulls
   const hullG = createEl("g", { id: "tv-const-hulls" });
   svg.appendChild(hullG);
 
-  // Edge layer
+  // Layer: edges
   const edgeG = createEl("g", { id: "tv-edges" });
   for (const e of mapData.edges) {
     const sysA = mapData.systems.find((s) => s.id === e.a);
     const sysB = mapData.systems.find((s) => s.id === e.b);
     if (!sysA || !sysB) continue;
-    const isInterRegion = sysA.regionId !== sysB.regionId;
-    const line = createEl("line", {
-      class: isInterRegion ? "tv-edge tv-edge-inter" : "tv-edge",
+    const interRegion = sysA.regionId !== sysB.regionId;
+    edgeG.appendChild(createEl("line", {
+      id: `tv-edge-${e.a}-${e.b}`,
+      class: interRegion ? "tv-edge tv-edge-inter" : "tv-edge",
       x1: sysA.nx * MAP_SIZE, y1: sysA.ny * MAP_SIZE,
       x2: sysB.nx * MAP_SIZE, y2: sysB.ny * MAP_SIZE,
-      "data-sys-a": sysA.id,  "data-sys-b": sysB.id,
-    });
-    edgeG.appendChild(line);
+      "data-sys-a": sysA.id, "data-sys-b": sysB.id,
+    }));
   }
   svg.appendChild(edgeG);
 
-  // Node layer
+  // Layer: nodes
   const nodeG = createEl("g", { id: "tv-nodes" });
   for (const sys of mapData.systems) {
-    const cx = sys.nx * MAP_SIZE;
-    const cy = sys.ny * MAP_SIZE;
-
+    const cx = sys.nx * MAP_SIZE, cy = sys.ny * MAP_SIZE;
     const g = createEl("g", {
       id: "tv-sys-" + sys.id,
       "data-system": sys.name,
+      "data-sys-id": sys.id,
       class: "tv-system-group",
     });
 
-    const ellipse = createEl("ellipse", {
+    g.appendChild(createEl("ellipse", {
       class: "tv-system-node",
       cx, cy, rx: NODE_RX, ry: NODE_RY,
       stroke: sys.regionColor,
       "data-base-stroke": sys.regionColor,
-    });
-    g.appendChild(ellipse);
+    }));
 
-    const label = createEl("text", {
-      class: "tv-system-label",
-      x: cx, y: cy,
-    });
-    label.textContent = sys.name;
-    g.appendChild(label);
+    const lbl = createEl("text", { class: "tv-system-label", x: cx, y: cy });
+    lbl.textContent = sys.name;
+    g.appendChild(lbl);
 
-    const badgeG = createEl("g", { id: "tv-badges-" + sys.id, class: "tv-badge-group" });
-    g.appendChild(badgeG);
+    g.appendChild(createEl("g", { id: "tv-badges-" + sys.id, class: "tv-badge-group" }));
     nodeG.appendChild(g);
   }
   svg.appendChild(nodeG);
@@ -268,21 +314,22 @@ function buildMap() {
   buildConstellationHulls(hullG);
   applyRegionVisibility();
   initPanZoom(svg);
+  if (CFG.canConfigure) initNodeDrag(svg);
   applyViewBox();
 }
 
-// ── Constellation hull (convex hull background) ───────────────────────────────
+// ── Constellation hulls ───────────────────────────────────────────────────────
 
-function convexHull(points) {
-  if (points.length < 3) return points;
-  points = [...points].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-  const cross = (O, A, B) => (A[0] - O[0]) * (B[1] - O[1]) - (A[1] - O[1]) * (B[0] - O[0]);
+function convexHull(pts) {
+  if (pts.length < 3) return pts;
+  pts = [...pts].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  const cross = (O, A, B) => (A[0]-O[0])*(B[1]-O[1]) - (A[1]-O[1])*(B[0]-O[0]);
   const lower = [], upper = [];
-  for (const p of points) {
+  for (const p of pts) {
     while (lower.length >= 2 && cross(lower.at(-2), lower.at(-1), p) <= 0) lower.pop();
     lower.push(p);
   }
-  for (const p of [...points].reverse()) {
+  for (const p of [...pts].reverse()) {
     while (upper.length >= 2 && cross(upper.at(-2), upper.at(-1), p) <= 0) upper.pop();
     upper.push(p);
   }
@@ -290,49 +337,34 @@ function convexHull(points) {
   return [...lower, ...upper];
 }
 
-function expandHull(hull, padding) {
-  // Find centroid then push each point outward
+function expandHull(hull, pad) {
   const cx = hull.reduce((s, p) => s + p[0], 0) / hull.length;
   const cy = hull.reduce((s, p) => s + p[1], 0) / hull.length;
   return hull.map(([x, y]) => {
-    const dx = x - cx, dy = y - cy;
-    const len = Math.hypot(dx, dy) || 1;
-    return [x + (dx / len) * padding, y + (dy / len) * padding];
+    const len = Math.hypot(x - cx, y - cy) || 1;
+    return [x + ((x - cx) / len) * pad, y + ((y - cy) / len) * pad];
   });
 }
 
 function buildConstellationHulls(hullG) {
   hullG.innerHTML = "";
-  const consts = mapData.constellations;
-  if (!consts) return;
-
-  for (const [cidStr, c] of Object.entries(consts)) {
-    const sids = mapData.systems
-      .filter((s) => s.constellationId === parseInt(cidStr, 10));
+  if (!mapData.constellations) return;
+  for (const [cidStr, c] of Object.entries(mapData.constellations)) {
+    const sids = mapData.systems.filter((s) => s.constellationId === parseInt(cidStr, 10));
     if (sids.length < 2) continue;
-
-    const points = sids.map((s) => [s.nx * MAP_SIZE, s.ny * MAP_SIZE]);
-    let hull = convexHull(points);
-    if (hull.length < 3) hull = points;  // fallback for collinear
+    const pts    = sids.map((s) => [s.nx * MAP_SIZE, s.ny * MAP_SIZE]);
+    let hull     = convexHull(pts);
+    if (hull.length < 3) hull = pts;
     const expanded = expandHull(hull, NODE_RX + 8);
-
-    const poly = createEl("polygon", {
-      class: "tv-const-hull",
-      id: "tv-hull-" + cidStr,
+    hullG.appendChild(createEl("polygon", {
+      class: "tv-const-hull", id: "tv-hull-" + cidStr,
       points: expanded.map((p) => p.join(",")).join(" "),
-      "data-region": c.regionName,
-      style: `fill:${c.color}`,
-    });
-    hullG.appendChild(poly);
-
+      "data-region": c.regionName, style: `fill:${c.color}`,
+    }));
     if (showConstLabels) {
-      const lx = c.centerNx * MAP_SIZE;
-      const ly = c.centerNy * MAP_SIZE;
       const lbl = createEl("text", {
-        class: "tv-const-label",
-        x: lx, y: ly,
-        "data-region": c.regionName,
-        style: `fill:${c.color}`,
+        class: "tv-const-label", x: c.centerNx * MAP_SIZE, y: c.centerNy * MAP_SIZE,
+        "data-region": c.regionName, style: `fill:${c.color}`,
       });
       lbl.textContent = c.name;
       hullG.appendChild(lbl);
@@ -340,12 +372,10 @@ function buildConstellationHulls(hullG) {
   }
 }
 
-// ── Map timer rendering ───────────────────────────────────────────────────────
+// ── Map timer badges ──────────────────────────────────────────────────────────
 
 function renderMapTimers() {
   const now = Date.now();
-
-  // Group visible timers by system
   const bySystem = {};
   for (const t of visibleTimers()) {
     const state = timerState(t, now);
@@ -360,7 +390,6 @@ function renderMapTimers() {
     const labelEl = document.querySelector(`#tv-sys-${sys.id} .tv-system-label`);
     const badgeG  = document.getElementById("tv-badges-" + sys.id);
     if (!badgeG) continue;
-
     badgeG.innerHTML = "";
     const entries = bySystem[sys.name] || [];
 
@@ -372,35 +401,20 @@ function renderMapTimers() {
 
     const priority = ["repairing", "elapsed", "upcoming"];
     const dominant = priority.find((p) => entries.some((e) => e.state === p)) ?? entries[0].state;
-
-    if (nodeEl) {
-      nodeEl.setAttribute("stroke", stateStroke(dominant));
-      nodeEl.className.baseVal = "tv-system-node tv-has-timer tv-node-" + dominant;
-    }
+    if (nodeEl) { nodeEl.setAttribute("stroke", stateStroke(dominant)); nodeEl.className.baseVal = "tv-system-node tv-has-timer tv-node-" + dominant; }
     if (labelEl) labelEl.className.baseVal = "tv-system-label tv-has-timer";
 
-    const cx      = sys.nx * MAP_SIZE;
-    const baseCy  = sys.ny * MAP_SIZE + NODE_RY + 6;
-    const badgeW  = 54, badgeH = 14, gap = 2;
+    const cx = sys.nx * MAP_SIZE, baseCy = sys.ny * MAP_SIZE + NODE_RY + 6;
+    const badgeW = 54, badgeH = 14, gap = 2;
 
     entries.forEach(({ t, state }, i) => {
-      const bx = cx - badgeW / 2;
-      const by = baseCy + i * (badgeH + gap);
-
-      const g = createEl("g", {
-        class: "tv-map-timer-badge tv-badge-" + state,
-        "data-timer-id": t.id,
-      });
-      const rect = createEl("rect", { class: "tv-map-badge-rect", x: bx, y: by, width: badgeW, height: badgeH, rx: 3, ry: 3 });
-      g.appendChild(rect);
-      const text = createEl("text", { class: "tv-map-badge-text", x: bx + badgeW / 2, y: by + badgeH / 2 });
-      text.textContent = shortCountdown(t, now);
-      g.appendChild(text);
-
-      if (state === "elapsed" && CFG.canConfirm) {
-        g.style.cursor = "pointer";
-        g.addEventListener("click", () => confirmRepair(t.id));
-      }
+      const bx = cx - badgeW / 2, by = baseCy + i * (badgeH + gap);
+      const g = createEl("g", { class: "tv-map-timer-badge tv-badge-" + state, "data-timer-id": t.id });
+      g.appendChild(createEl("rect", { class: "tv-map-badge-rect", x: bx, y: by, width: badgeW, height: badgeH, rx: 3, ry: 3 }));
+      const txt = createEl("text", { class: "tv-map-badge-text", x: bx + badgeW / 2, y: by + badgeH / 2 });
+      txt.textContent = shortCountdown(t, now);
+      g.appendChild(txt);
+      if (state === "elapsed" && CFG.canConfirm) { g.style.cursor = "pointer"; g.addEventListener("click", () => confirmRepair(t.id)); }
       badgeG.appendChild(g);
     });
   }
@@ -410,27 +424,117 @@ function stateStroke(state) {
   return { upcoming: "#1f6feb", repairing: "#da3633", elapsed: "#e3b341", confirmed: "#238636" }[state] ?? "#30363d";
 }
 
-// ── Region / constellation visibility ────────────────────────────────────────
+// ── Node dragging (configure_timerviz) ───────────────────────────────────────
+
+function initNodeDrag(svg) {
+  svg.addEventListener("pointerdown", (e) => {
+    const nodeGroup = e.target.closest(".tv-system-group");
+    if (!nodeGroup || e.target.closest(".tv-map-timer-badge")) return;
+
+    const sysId   = parseInt(nodeGroup.dataset.sysId, 10);
+    const sysName = nodeGroup.dataset.system;
+    const sys     = mapData.systems.find((s) => s.id === sysId);
+    if (!sys) return;
+
+    e.stopPropagation(); // prevent map pan
+    const pt = svgPt(svg, e.clientX, e.clientY);
+    dragState = { sysId, sysName, startSvgX: pt.x, startSvgY: pt.y, origNx: sys.nx, origNy: sys.ny, moved: false };
+    nodeGroup.style.cursor = "grabbing";
+    nodeGroup.setPointerCapture(e.pointerId);
+    updateDragHint(true);
+  });
+
+  svg.addEventListener("pointermove", (e) => {
+    if (!dragState) return;
+    const pt  = svgPt(svg, e.clientX, e.clientY);
+    const dx  = pt.x - dragState.startSvgX;
+    const dy  = pt.y - dragState.startSvgY;
+    if (Math.hypot(dx, dy) < 3) return;
+    dragState.moved = true;
+
+    const sys = mapData.systems.find((s) => s.id === dragState.sysId);
+    if (!sys) return;
+
+    sys.nx = Math.max(0.01, Math.min(0.99, dragState.origNx + dx / MAP_SIZE));
+    sys.ny = Math.max(0.01, Math.min(0.99, dragState.origNy + dy / MAP_SIZE));
+
+    moveSystemNode(sys);
+  });
+
+  svg.addEventListener("pointerup", async (e) => {
+    if (!dragState) return;
+    const { sysId, sysName, moved } = dragState;
+    dragState = null;
+    updateDragHint(false);
+
+    const nodeGroup = document.getElementById("tv-sys-" + sysId);
+    if (nodeGroup) nodeGroup.style.cursor = "";
+
+    if (!moved) return;
+
+    const sys = mapData.systems.find((s) => s.id === sysId);
+    if (!sys) return;
+    await savePosition(sysName, sys.nx, sys.ny);
+
+    // Rebuild hulls since positions changed
+    buildConstellationHulls(document.getElementById("tv-const-hulls"));
+    renderMapTimers();
+  });
+
+  svg.addEventListener("pointercancel", () => { dragState = null; updateDragHint(false); });
+}
+
+function moveSystemNode(sys) {
+  const cx = sys.nx * MAP_SIZE, cy = sys.ny * MAP_SIZE;
+  const g  = document.getElementById("tv-sys-" + sys.id);
+  if (!g) return;
+
+  const ellipse = g.querySelector(".tv-system-node");
+  if (ellipse) { ellipse.setAttribute("cx", cx); ellipse.setAttribute("cy", cy); }
+
+  const lbl = g.querySelector(".tv-system-label");
+  if (lbl) { lbl.setAttribute("x", cx); lbl.setAttribute("y", cy); }
+
+  // Move attached edges
+  document.querySelectorAll(`line[data-sys-a="${sys.id}"]`).forEach((l) => { l.setAttribute("x1", cx); l.setAttribute("y1", cy); });
+  document.querySelectorAll(`line[data-sys-b="${sys.id}"]`).forEach((l) => { l.setAttribute("x2", cx); l.setAttribute("y2", cy); });
+
+  // Move badges
+  const badgeG = document.getElementById("tv-badges-" + sys.id);
+  if (badgeG) {
+    const baseCy = cy + NODE_RY + 6, badgeW = 54, badgeH = 14, gap = 2;
+    badgeG.querySelectorAll(".tv-map-timer-badge").forEach((badge, i) => {
+      const rect = badge.querySelector(".tv-map-badge-rect");
+      const txt  = badge.querySelector(".tv-map-badge-text");
+      const bx = cx - badgeW / 2, by = baseCy + i * (badgeH + gap);
+      if (rect) { rect.setAttribute("x", bx); rect.setAttribute("y", by); }
+      if (txt)  { txt.setAttribute("x", bx + badgeW / 2); txt.setAttribute("y", by + badgeH / 2); }
+    });
+  }
+}
+
+function updateDragHint(dragging) {
+  const hint = document.getElementById("tv-drag-mode-label");
+  if (!hint) return;
+  hint.innerHTML = dragging
+    ? "Drag mode: <strong style='color:#e3b341'>dragging…</strong>"
+    : "Drag mode: <strong>click node to drag</strong>";
+}
+
+// ── Region visibility ─────────────────────────────────────────────────────────
 
 function applyRegionVisibility() {
   for (const sys of mapData.systems) {
-    const hidden = hiddenRegions.has(sys.regionName);
     const g = document.getElementById("tv-sys-" + sys.id);
-    if (g) g.style.display = hidden ? "none" : "";
+    if (g) g.style.display = hiddenRegions.has(sys.regionName) ? "none" : "";
   }
-
-  // Hide edges where both endpoints are in hidden regions
   document.querySelectorAll(".tv-edge[data-sys-a]").forEach((line) => {
-    const sysA = mapData.systems.find((s) => s.id === parseInt(line.dataset.sysA, 10));
-    const sysB = mapData.systems.find((s) => s.id === parseInt(line.dataset.sysB, 10));
-    const hide = (sysA && hiddenRegions.has(sysA.regionName)) && (sysB && hiddenRegions.has(sysB.regionName));
-    line.style.display = hide ? "none" : "";
+    const sA = mapData.systems.find((s) => s.id === parseInt(line.dataset.sysA, 10));
+    const sB = mapData.systems.find((s) => s.id === parseInt(line.dataset.sysB, 10));
+    line.style.display = (sA && hiddenRegions.has(sA.regionName)) && (sB && hiddenRegions.has(sB.regionName)) ? "none" : "";
   });
-
-  // Hide constellation hulls for hidden regions
   document.querySelectorAll(".tv-const-hull, .tv-const-label").forEach((el) => {
-    const hidden = hiddenRegions.has(el.dataset.region);
-    el.style.display = hidden ? "none" : "";
+    el.style.display = hiddenRegions.has(el.dataset.region) ? "none" : "";
   });
 }
 
@@ -442,8 +546,7 @@ function applyViewBox() {
 
 function zoom(factor, cx, cy) {
   const newW = Math.min(4800, Math.max(150, vb.w * factor));
-  const pX   = cx ?? vb.x + vb.w / 2;
-  const pY   = cy ?? vb.y + vb.h / 2;
+  const pX = cx ?? vb.x + vb.w / 2, pY = cy ?? vb.y + vb.h / 2;
   vb.x = pX - (pX - vb.x) * (newW / vb.w);
   vb.y = pY - (pY - vb.y) * (newW / vb.h);
   vb.w = newW; vb.h = newW;
@@ -458,7 +561,7 @@ function svgPt(svg, cx, cy) {
 
 function initPanZoom(svg) {
   svg.addEventListener("pointerdown", (e) => {
-    if (e.target.closest(".tv-map-timer-badge")) return;
+    if (e.target.closest(".tv-system-group") || e.target.closest(".tv-map-timer-badge")) return;
     isPanning = true;
     panStart  = svgPt(svg, e.clientX, e.clientY);
     svg.setPointerCapture(e.pointerId);
@@ -466,8 +569,7 @@ function initPanZoom(svg) {
   svg.addEventListener("pointermove", (e) => {
     if (!isPanning || !panStart) return;
     const cur = svgPt(svg, e.clientX, e.clientY);
-    vb.x -= cur.x - panStart.x;
-    vb.y -= cur.y - panStart.y;
+    vb.x -= cur.x - panStart.x; vb.y -= cur.y - panStart.y;
     applyViewBox();
     panStart = svgPt(svg, e.clientX, e.clientY);
   });
@@ -498,8 +600,8 @@ function initControls() {
     if (!isNaN(v) && v >= 1) { upcomingWindowMin = v; render(); }
   });
 
-  // Region toggles (configure_timerviz only)
   if (CFG.canConfigure) {
+    // Region toggles
     const container = document.getElementById("tv-region-toggles");
     if (container && mapData?.regions) {
       for (const reg of mapData.regions) {
@@ -509,23 +611,18 @@ function initControls() {
         cb.type = "checkbox";
         cb.checked = !hiddenRegions.has(reg.name);
         cb.addEventListener("change", () => {
-          if (cb.checked) hiddenRegions.delete(reg.name);
-          else hiddenRegions.add(reg.name);
+          if (cb.checked) hiddenRegions.delete(reg.name); else hiddenRegions.add(reg.name);
           localStorage.setItem("tv-hidden-regions", JSON.stringify([...hiddenRegions]));
-          applyRegionVisibility();
-          renderMapTimers();
-          renderSidebar();
+          applyRegionVisibility(); renderMapTimers(); renderSidebar();
         });
         const pip = document.createElement("span");
-        pip.className = "tv-region-pip";
-        pip.style.background = reg.color;
-        label.appendChild(cb);
-        label.appendChild(pip);
-        label.appendChild(document.createTextNode(" " + reg.name));
+        pip.className = "tv-region-pip"; pip.style.background = reg.color;
+        label.append(cb, pip, document.createTextNode(" " + reg.name));
         container.appendChild(label);
       }
     }
 
+    // Constellation label toggle
     const clToggle = document.getElementById("tv-const-label-toggle");
     if (clToggle) {
       clToggle.checked = showConstLabels;
@@ -535,10 +632,21 @@ function initControls() {
         buildConstellationHulls(document.getElementById("tv-const-hulls"));
       });
     }
+
+    // Reset positions
+    const resetBtn = document.getElementById("tv-reset-all-positions");
+    if (resetBtn) {
+      resetBtn.addEventListener("click", () => {
+        if (confirm("Reset all custom node positions to defaults?")) resetAllPositions();
+      });
+    }
+
+    // Show drag hint
+    updateDragHint(false);
   }
 }
 
-// ── SVG helpers ───────────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function createEl(tag, attrs = {}) {
   const el = document.createElementNS(SVG_NS, tag);
@@ -549,7 +657,5 @@ function createEl(tag, attrs = {}) {
 function escHtml(s) {
   return String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
-
-// ── Start ─────────────────────────────────────────────────────────────────────
 
 boot();

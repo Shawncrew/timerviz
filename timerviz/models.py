@@ -15,6 +15,22 @@ class General(models.Model):
         )
 
 
+class SystemPosition(models.Model):
+    """Custom drag-positioned coordinates for a system node on the map."""
+
+    system_name = models.CharField(max_length=100, unique=True, db_index=True)
+    nx = models.FloatField()
+    ny = models.FloatField()
+    updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+
+    class Meta:
+        default_permissions = ()
+
+    def __str__(self):
+        return f"{self.system_name} ({self.nx:.4f}, {self.ny:.4f})"
+
+
 class TimerRepairState(models.Model):
     """Tracks user confirmation that a structure timer has finished repairing."""
 

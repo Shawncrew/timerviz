@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<div id="timerviz-root">
+<div id="timerviz-root" {% if can_configure %}class="tv-can-configure"{% endif %}>
   <div id="tv-sidebar">
     <div id="tv-sidebar-header">
       <h5>Structure Timers</h5>
@@ -39,6 +39,12 @@
       <label class="tv-const-toggle-row">
         <input type="checkbox" id="tv-const-label-toggle"> Show constellation names
       </label>
+      <div class="tv-drag-hint" id="tv-drag-hint">
+        <span id="tv-drag-mode-label">Drag mode: <strong>off</strong></span>
+      </div>
+      <button id="tv-reset-all-positions" class="btn btn-sm btn-outline-danger mt-2 w-100">
+        Reset all positions
+      </button>
     </details>
     {% endif %}
 
@@ -69,6 +75,8 @@
   window.TIMERVIZ_CONFIG = {
     timerDataUrl: "{% url 'timerviz:timer_data' %}",
     confirmRepairUrlTemplate: "{% url 'timerviz:confirm_repair' timer_id=0 %}".replace("/0/", "/{id}/"),
+    positionsUrl: "{% url 'timerviz:positions' %}",
+    positionsResetUrl: "{% url 'timerviz:positions_reset' %}",
     upcomingWindowMin: {{ upcoming_window_min }},
     repairWindowMin: {{ repair_window_min }},
     csrfToken: "{{ csrf_token }}",
