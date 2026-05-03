@@ -228,7 +228,7 @@ function buildLayout(systems, constellations, edges) {
   // Step 4: scale layout to a compact cluster centered at (0.5, 0.5)
   // TARGET_SPAN controls how much of the canvas the cluster occupies (0.0–1.0).
   // The rest is empty drag space on all sides.
-  const TARGET_SPAN = 0.30;
+  const TARGET_SPAN = 0.60;
 
   const allNx = allList.map((s) => s.nx), allNy = allList.map((s) => s.ny);
   const minNx = Math.min(...allNx), maxNx = Math.max(...allNx);
