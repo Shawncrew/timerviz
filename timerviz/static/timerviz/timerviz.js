@@ -8,9 +8,9 @@ const CFG = window.TIMERVIZ_CONFIG;
 
 const REPAIR_MS = CFG.repairWindowMin * 60 * 1000;
 const SVG_NS    = "http://www.w3.org/2000/svg";
-const MAP_SIZE  = 1000;
-const NODE_RX   = 26;
-const NODE_RY   = 14;
+const MAP_SIZE  = 4000;
+const NODE_RX   = 52;
+const NODE_RY   = 28;
 const POLL_MS   = 10_000;
 
 // ── State ────────────────────────────────────────────────────────────────────
@@ -355,7 +355,7 @@ function buildConstellationHulls(hullG) {
     const pts    = sids.map((s) => [s.nx * MAP_SIZE, s.ny * MAP_SIZE]);
     let hull     = convexHull(pts);
     if (hull.length < 3) hull = pts;
-    const expanded = expandHull(hull, NODE_RX + 8);
+    const expanded = expandHull(hull, NODE_RX + 20);
     hullG.appendChild(createEl("polygon", {
       class: "tv-const-hull", id: "tv-hull-" + cidStr,
       points: expanded.map((p) => p.join(",")).join(" "),
@@ -404,8 +404,8 @@ function renderMapTimers() {
     if (nodeEl) { nodeEl.setAttribute("stroke", stateStroke(dominant)); nodeEl.className.baseVal = "tv-system-node tv-has-timer tv-node-" + dominant; }
     if (labelEl) labelEl.className.baseVal = "tv-system-label tv-has-timer";
 
-    const cx = sys.nx * MAP_SIZE, baseCy = sys.ny * MAP_SIZE + NODE_RY + 6;
-    const badgeW = 54, badgeH = 14, gap = 2;
+    const cx = sys.nx * MAP_SIZE, baseCy = sys.ny * MAP_SIZE + NODE_RY + 12;
+    const badgeW = 108, badgeH = 28, gap = 4;
 
     entries.forEach(({ t, state }, i) => {
       const bx = cx - badgeW / 2, by = baseCy + i * (badgeH + gap);
@@ -502,7 +502,7 @@ function moveSystemNode(sys) {
   // Move badges
   const badgeG = document.getElementById("tv-badges-" + sys.id);
   if (badgeG) {
-    const baseCy = cy + NODE_RY + 6, badgeW = 54, badgeH = 14, gap = 2;
+    const baseCy = cy + NODE_RY + 12, badgeW = 108, badgeH = 28, gap = 4;
     badgeG.querySelectorAll(".tv-map-timer-badge").forEach((badge, i) => {
       const rect = badge.querySelector(".tv-map-badge-rect");
       const txt  = badge.querySelector(".tv-map-badge-text");
@@ -545,7 +545,7 @@ function applyViewBox() {
 }
 
 function zoom(factor, cx, cy) {
-  const newW = Math.min(4800, Math.max(150, vb.w * factor));
+  const newW = Math.min(16000, Math.max(400, vb.w * factor));
   const pX = cx ?? vb.x + vb.w / 2, pY = cy ?? vb.y + vb.h / 2;
   vb.x = pX - (pX - vb.x) * (newW / vb.w);
   vb.y = pY - (pY - vb.y) * (newW / vb.h);
