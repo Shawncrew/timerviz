@@ -1,7 +1,9 @@
 /**
- * Fetch Pure Blind + Fade from ESI and generate a proper per-region XZ projection.
- * Each region is normalised independently then placed side-by-side on the canvas.
- * This matches what Dotlan does — each region maps its own XZ extent to screen space.
+ * Build map-data.json using:
+ *  - Pure Blind: exact Dotlan pixel coordinates (from dotlan.net/svg/Pure_Blind.svg)
+ *  - Fade:       per-region EVE XZ projection
+ *
+ * After placing all systems a repulsion-only pass ensures no two nodes overlap.
  *
  * Run: node scripts/build_map_data.mjs
  * ESI responses cached in scripts/esi-cache.json.
@@ -16,16 +18,76 @@ const CACHE_FILE = join(__dirname, "esi-cache.json");
 const OUT_FILE   = join(__dirname, "..", "timerviz", "static", "timerviz", "map-data.json");
 const ESI        = "https://esi.evetech.net/latest";
 
-// Region order left → right on canvas
 const REGIONS = [
   { id: 10000046, name: "Fade",       color: "#8957e5" },
   { id: 10000023, name: "Pure Blind", color: "#1f6feb" },
 ];
 
-// How much of the canvas each region occupies (fractions, must sum ≤ 1)
-// Gap between regions
-const REGION_GAP  = 0.04;
-const CANVAS_PAD  = 0.02;   // outer padding on all sides
+// ── Dotlan Pure Blind pixel coordinates (canvas 1024 × 768) ──────────────────
+// Source: https://evemaps.dotlan.net/svg/Pure_Blind.svg
+const DOTLAN_PB = {
+  width: 1024, height: 768,
+  systems: {
+    "E-Z2ZX":  { x: 0,   y: 300 }, "7D-0SQ":  { x: 0,   y: 625 },
+    "RORZ-H":  { x: 30,  y: 340 }, "KU5R-W":  { x: 30,  y: 505 },
+    "H1-J33":  { x: 30,  y: 545 }, "Y-C3EQ":  { x: 30,  y: 585 },
+    "VRH-H7":  { x: 55,  y: 160 }, "P-2TTL":  { x: 65,  y: 300 },
+    "OGV-AS":  { x: 65,  y: 625 }, "UI-8ZE":  { x: 65,  y: 675 },
+    "O-A6YN":  { x: 100, y: 339 }, "7X-VKB":  { x: 105, y: 255 },
+    "O-CNPR":  { x: 115, y: 90  }, "B-9C24":  { x: 140, y: 300 },
+    "Y2-6EA":  { x: 145, y: 665 }, "DT-TCD":  { x: 145, y: 715 },
+    "TFA0-U":  { x: 170, y: 620 }, "F-NMX6":  { x: 205, y: 300 },
+    "ZKYV-W":  { x: 205, y: 350 }, "FWA-4V":  { x: 205, y: 400 },
+    "DW-T2I":  { x: 210, y: 40  }, "RZC-16":  { x: 215, y: 460 },
+    "D2-HOS":  { x: 215, y: 665 }, "HPS5-C":  { x: 215, y: 715 },
+    "MQ-NPY":  { x: 245, y: 620 }, "GA-P6C":  { x: 250, y: 250 },
+    "7RM-N0":  { x: 275, y: 300 }, "S-MDYI":  { x: 275, y: 350 },
+    "RQH-MY":  { x: 285, y: 665 }, "MT9Q-S":  { x: 320, y: 595 },
+    "E-9ORY":  { x: 345, y: 90  }, "C8-CHY":  { x: 345, y: 135 },
+    "ROIR-Y":  { x: 345, y: 215 }, "G95-VZ":  { x: 345, y: 255 },
+    "KLY-C0":  { x: 345, y: 300 }, "CL6-ZG":  { x: 345, y: 350 },
+    "RD-G2R":  { x: 350, y: 435 }, "UC3H-Y":  { x: 370, y: 500 },
+    "KDV-DE":  { x: 385, y: 560 }, "J-CIJV":  { x: 415, y: 255 },
+    "X-7OMU":  { x: 415, y: 300 }, "CXN1-Z":  { x: 415, y: 350 },
+    "X47L-Q":  { x: 435, y: 140 }, "6GWE-A":  { x: 440, y: 590 },
+    "4-ABS8":  { x: 460, y: 200 }, "J-OK0C":  { x: 460, y: 635 },
+    "KQK1-2":  { x: 480, y: 85  }, "R-LW2I":  { x: 490, y: 255 },
+    "B8EN-S":  { x: 490, y: 300 }, "DP-1YE":  { x: 510, y: 175 },
+    "MI6O-6":  { x: 510, y: 445 }, "UR-E6D":  { x: 530, y: 115 },
+    "3V8-LJ":  { x: 555, y: 300 }, "R6XN-9":  { x: 565, y: 365 },
+    "L-TS8S":  { x: 565, y: 430 }, "O-BY0Y":  { x: 575, y: 80  },
+    "O-N8XZ":  { x: 575, y: 485 }, "2-6TGQ":  { x: 585, y: 175 },
+    "JE-D5U":  { x: 600, y: 260 }, "EWOK-K":  { x: 615, y: 560 },
+    "EC-P8R":  { x: 615, y: 610 }, "5ZXX-K":  { x: 620, y: 210 },
+    "2D-0SO":  { x: 640, y: 105 }, "PFU-LH":  { x: 640, y: 315 },
+    "8S-0E1":  { x: 665, y: 170 }, "OE-9UF":  { x: 680, y: 260 },
+    "G-M4I8":  { x: 695, y: 580 }, "U-INPD":  { x: 710, y: 10  },
+    "D7T-C0":  { x: 720, y: 145 }, "93PI-4":  { x: 720, y: 620 },
+    "XI-VUF":  { x: 775, y: 105 }, "R-2R0G":  { x: 780, y: 545 },
+    "KI-TL0":  { x: 785, y: 150 }, "DK-FXK":  { x: 815, y: 20  },
+    "JC-YX8":  { x: 815, y: 215 }, "M-YCD4":  { x: 825, y: 450 },
+    "A8I-C5":  { x: 840, y: 65  }, "EL8-4Q":  { x: 845, y: 180 },
+    "Q-5211":  { x: 860, y: 485 }, "N-H32Y":  { x: 870, y: 145 },
+    "5-9WNU":  { x: 890, y: 225 }, "ZJET-E":  { x: 900, y: 0   },
+    "XQ-PXU":  { x: 900, y: 445 }, "C-H9X7":  { x: 915, y: 95  },
+    "WW-KGD":  { x: 920, y: 395 }, "CR-AQH":  { x: 920, y: 510 },
+    "M-76XI":  { x: 925, y: 35  }, "12YA-2":  { x: 925, y: 275 },
+    "BDV3-T":  { x: 950, y: 340 }, "ION-FG":  { x: 955, y: 170 },
+  },
+};
+
+// Canvas allocation (normalised 0-1)
+// Pure Blind gets the right portion, Fade the left
+const PB_LEFT = 0.38, PB_RIGHT = 0.99;
+const PB_TOP  = 0.02, PB_BOT   = 0.98;
+const FD_LEFT = 0.01, FD_RIGHT = 0.36;
+const FD_TOP  = 0.02, FD_BOT   = 0.98;
+
+// Minimum separation between node centres (normalised)
+// NODE_RX=52, NODE_RY=28 on a 4000-unit canvas → radius ≈ 0.013/0.007
+// We want a comfortable gap so use ~3× the ellipse half-width
+const MIN_SEP = 0.048;
+const SEP_ITERS = 300;
 
 // ── Cache ─────────────────────────────────────────────────────────────────────
 let cache = existsSync(CACHE_FILE)
@@ -87,78 +149,90 @@ async function fetchAll() {
   return { systems, constellations, edges };
 }
 
-// ── Layout: per-region XZ projection ─────────────────────────────────────────
-//
-// EVE coordinate conventions for region maps:
-//   Screen X  =  EVE X   (higher X → right)
-//   Screen Y  = -EVE Z   (higher Z → up in EVE → lower on screen, so we flip)
-//
-// Each region's XZ extent is independently normalised so the intra-region
-// topology matches Dotlan.  Regions are placed left→right with a gap.
-//
+// ── Layout ────────────────────────────────────────────────────────────────────
+
 function buildLayout(systems, constellations) {
-  // Group systems by region in the declared order
-  const byRegion = new Map(REGIONS.map((r) => [r.id, []]));
-  for (const s of systems.values()) byRegion.get(s.regionId)?.push(s);
+  const pbW = PB_RIGHT - PB_LEFT;
+  const pbH = PB_BOT   - PB_TOP;
+  const dotW = DOTLAN_PB.width;
+  const dotH = DOTLAN_PB.height;
 
-  // Determine horizontal slices for each region
-  // Weight slices by system count so each region gets proportional width
-  const totalSystems = [...byRegion.values()].reduce((n, a) => n + a.length, 0);
-  const usableWidth = 1 - 2 * CANVAS_PAD - REGION_GAP * (REGIONS.length - 1);
+  let pbMissing = 0;
 
-  let cursorX = CANVAS_PAD;
-  const regionSlices = new Map();   // regionId → { left, right }
-
-  for (const reg of REGIONS) {
-    const sysCount = byRegion.get(reg.id)?.length ?? 0;
-    const width    = usableWidth * (sysCount / totalSystems);
-    regionSlices.set(reg.id, { left: cursorX, right: cursorX + width });
-    cursorX += width + REGION_GAP;
-  }
-
-  // Project each region independently in XZ space
-  for (const reg of REGIONS) {
-    const slice   = regionSlices.get(reg.id);
-    const sysList = byRegion.get(reg.id) ?? [];
-    if (!sysList.length) continue;
-
-    const xs = sysList.map((s) => s.x);
-    const zs = sysList.map((s) => s.z);
-    const minX = Math.min(...xs), maxX = Math.max(...xs);
-    const minZ = Math.min(...zs), maxZ = Math.max(...zs);
-    const spanX = maxX - minX || 1;
-    const spanZ = maxZ - minZ || 1;
-
-    // Maintain aspect ratio — fit inside slice without distortion
-    const sliceW = slice.right - slice.left;
-    const sliceH = 1 - 2 * CANVAS_PAD;
-    const aspect = spanX / spanZ;
-
-    let scaleX, scaleZ, offX = 0, offY = 0;
-    if (aspect > sliceW / sliceH) {
-      // width-limited
-      scaleX = sliceW / spanX;
-      scaleZ = scaleX;
-      offY   = (sliceH - spanZ * scaleZ) / 2;
+  // ── Pure Blind: stamp Dotlan coordinates ──────────────────────────────────
+  for (const sys of systems.values()) {
+    if (sys.regionId !== 10000023) continue;
+    const dot = DOTLAN_PB.systems[sys.name];
+    if (dot) {
+      sys.nx = PB_LEFT + (dot.x / dotW) * pbW;
+      sys.ny = PB_TOP  + (dot.y / dotH) * pbH;
     } else {
-      // height-limited
-      scaleZ = sliceH / spanZ;
-      scaleX = scaleZ;
-      offX   = (sliceW - spanX * scaleX) / 2;
-    }
-
-    for (const s of sysList) {
-      s.nx = slice.left + offX + ((s.x - minX) * scaleX);
-      // Flip Z: higher EVE Z = "north" = top of screen
-      s.ny = CANVAS_PAD + offY + ((maxZ - s.z) * scaleZ);
-
-      s.nx = Math.max(0.01, Math.min(0.99, s.nx));
-      s.ny = Math.max(0.01, Math.min(0.99, s.ny));
+      // Fallback: XZ projection into PB slice for any system not in Dotlan data
+      pbMissing++;
+      sys.nx = PB_LEFT + pbW / 2;
+      sys.ny = PB_TOP  + pbH / 2;
     }
   }
 
-  // Recompute constellation centres from final positions
-  for (const [cid, c] of constellations) {
+  if (pbMissing) console.warn(`  ${pbMissing} Pure Blind systems had no Dotlan coordinate — placed at centre`);
+
+  // ── Fade: XZ projection into left slice ────────────────────────────────────
+  const fadeSys = [...systems.values()].filter((s) => s.regionId === 10000046);
+  const fdXs = fadeSys.map((s) => s.x), fdZs = fadeSys.map((s) => s.z);
+  const fdMinX = Math.min(...fdXs), fdMaxX = Math.max(...fdXs);
+  const fdMinZ = Math.min(...fdZs), fdMaxZ = Math.max(...fdZs);
+  const fdSpanX = fdMaxX - fdMinX || 1, fdSpanZ = fdMaxZ - fdMinZ || 1;
+
+  const fdW = FD_RIGHT - FD_LEFT, fdH = FD_BOT - FD_TOP;
+  const aspectFd = fdSpanX / fdSpanZ;
+  let fdScaleX, fdScaleZ, fdOffX = 0, fdOffY = 0;
+  if (aspectFd > fdW / fdH) {
+    fdScaleX = fdW / fdSpanX; fdScaleZ = fdScaleX;
+    fdOffY = (fdH - fdSpanZ * fdScaleZ) / 2;
+  } else {
+    fdScaleZ = fdH / fdSpanZ; fdScaleX = fdScaleZ;
+    fdOffX = (fdW - fdSpanX * fdScaleX) / 2;
+  }
+
+  for (const sys of fadeSys) {
+    sys.nx = FD_LEFT + fdOffX + ((sys.x - fdMinX) * fdScaleX);
+    sys.ny = FD_TOP  + fdOffY + ((fdMaxZ - sys.z)  * fdScaleZ);
+    sys.nx = Math.max(FD_LEFT, Math.min(FD_RIGHT, sys.nx));
+    sys.ny = Math.max(FD_TOP,  Math.min(FD_BOT,   sys.ny));
+  }
+
+  // ── Separation pass: push overlapping nodes apart ─────────────────────────
+  const sysList = [...systems.values()];
+  console.log(`  Running ${SEP_ITERS} separation iterations (min gap ${MIN_SEP})…`);
+
+  for (let iter = 0; iter < SEP_ITERS; iter++) {
+    for (let i = 0; i < sysList.length; i++) {
+      for (let j = i + 1; j < sysList.length; j++) {
+        const si = sysList[i], sj = sysList[j];
+        const dx = sj.nx - si.nx, dy = sj.ny - si.ny;
+        const d  = Math.hypot(dx, dy) || 1e-9;
+        if (d < MIN_SEP) {
+          const push = (MIN_SEP - d) * 0.5;
+          const ux = dx / d, uy = dy / d;
+          si.nx -= ux * push * 0.5; si.ny -= uy * push * 0.5;
+          sj.nx += ux * push * 0.5; sj.ny += uy * push * 0.5;
+        }
+      }
+    }
+    // Clamp into their respective region slices after each iter
+    for (const s of systems.values()) {
+      if (s.regionId === 10000023) {
+        s.nx = Math.max(PB_LEFT - 0.02, Math.min(PB_RIGHT + 0.02, s.nx));
+        s.ny = Math.max(0.01, Math.min(0.99, s.ny));
+      } else {
+        s.nx = Math.max(FD_LEFT - 0.02, Math.min(FD_RIGHT + 0.02, s.nx));
+        s.ny = Math.max(0.01, Math.min(0.99, s.ny));
+      }
+    }
+  }
+
+  // ── Recompute constellation centres ───────────────────────────────────────
+  for (const [, c] of constellations) {
     const sids = c.systems.filter((id) => systems.has(id));
     if (!sids.length) continue;
     c.centerNx = sids.reduce((s, id) => s + systems.get(id).nx, 0) / sids.length;
@@ -172,7 +246,7 @@ async function main() {
   const { systems, constellations, edges } = await fetchAll();
   console.log(`\nLayout: ${systems.size} systems, ${constellations.size} constellations, ${edges.size} edges`);
 
-  console.log("Building per-region XZ projection…");
+  console.log("Applying Dotlan positions (Pure Blind) + XZ projection (Fade)…");
   buildLayout(systems, constellations);
 
   const out = {
@@ -203,7 +277,7 @@ async function main() {
   };
 
   writeFileSync(OUT_FILE, JSON.stringify(out, null, 2));
-  console.log(`\nWrote ${out.systems.length} systems, ${out.edges.length} edges, ${Object.keys(out.constellations).length} constellations`);
+  console.log(`\nWrote ${out.systems.length} systems, ${out.edges.length} edges`);
   console.log(`→ ${OUT_FILE}`);
 }
 
