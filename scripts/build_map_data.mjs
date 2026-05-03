@@ -149,7 +149,7 @@ function buildLayout(systems, constellations, edges) {
   console.log(`  Placed ${placed.size} systems from Dotlan coordinates.`);
 
   // Step 2: center + scale only the 90 Dotlan-placed systems
-  const TARGET_SPAN = 0.60;
+  const TARGET_SPAN = 0.30;
   const placedList = [...systems.values()].filter((s) => placed.has(s.id));
 
   // Separation pass on placed systems only
@@ -190,33 +190,35 @@ function buildLayout(systems, constellations, edges) {
   // Constellation 20000537 — mid cluster  (K4YZ-Y, L-SCBU, O1Y-ED, X36Y-G, L-C3O7)
   // Constellation 20000536 — near E-9ORY  (P-33KR, DO6H-Q, CR-IFM, HHK-VL)
   // Constellation 20000538 — below VRH-H7 (C-OK0R, YKSC-A, 0-ARFO, 8W-OSE, FIO1-8, WQY-IQ, E9KD-N)
+  // Positions scaled to match TARGET_SPAN=0.30 on 8000×8000 canvas.
+  // Formula: new = 0.5 + (old - 0.5) * 0.5  (halve distance from centre)
   const FADE_POS = {
     // Constellation 20000539
-    "I-UUI5":  { nx: 0.052, ny: 0.245 },
-    "MPPA-A":  { nx: 0.092, ny: 0.236 },
-    "GME-PQ":  { nx: 0.133, ny: 0.245 },
-    "C4C-Z4":  { nx: 0.171, ny: 0.255 },
-    "X5-UME":  { nx: 0.130, ny: 0.300 },
-    "8QMO-E":  { nx: 0.052, ny: 0.295 },
+    "I-UUI5":  { nx: 0.276, ny: 0.373 },
+    "MPPA-A":  { nx: 0.296, ny: 0.368 },
+    "GME-PQ":  { nx: 0.317, ny: 0.373 },
+    "C4C-Z4":  { nx: 0.336, ny: 0.378 },
+    "X5-UME":  { nx: 0.315, ny: 0.400 },
+    "8QMO-E":  { nx: 0.276, ny: 0.398 },
     // Constellation 20000537
-    "K4YZ-Y":  { nx: 0.220, ny: 0.208 },
-    "L-SCBU":  { nx: 0.262, ny: 0.208 },
-    "O1Y-ED":  { nx: 0.242, ny: 0.242 },
-    "X36Y-G":  { nx: 0.202, ny: 0.302 },
-    "L-C3O7":  { nx: 0.180, ny: 0.270 },
+    "K4YZ-Y":  { nx: 0.360, ny: 0.354 },
+    "L-SCBU":  { nx: 0.381, ny: 0.354 },
+    "O1Y-ED":  { nx: 0.371, ny: 0.371 },
+    "X36Y-G":  { nx: 0.351, ny: 0.401 },
+    "L-C3O7":  { nx: 0.340, ny: 0.385 },
     // Constellation 20000536
-    "P-33KR":  { nx: 0.352, ny: 0.220 },
-    "DO6H-Q":  { nx: 0.380, ny: 0.240 },
-    "HHK-VL":  { nx: 0.392, ny: 0.268 },
-    "CR-IFM":  { nx: 0.358, ny: 0.280 },
+    "P-33KR":  { nx: 0.426, ny: 0.360 },
+    "DO6H-Q":  { nx: 0.440, ny: 0.370 },
+    "HHK-VL":  { nx: 0.446, ny: 0.384 },
+    "CR-IFM":  { nx: 0.429, ny: 0.390 },
     // Constellation 20000538
-    "C-OK0R":  { nx: 0.162, ny: 0.345 },
-    "YKSC-A":  { nx: 0.208, ny: 0.348 },
-    "0-ARFO":  { nx: 0.128, ny: 0.382 },
-    "8W-OSE":  { nx: 0.172, ny: 0.385 },
-    "FIO1-8":  { nx: 0.202, ny: 0.385 },
-    "WQY-IQ":  { nx: 0.172, ny: 0.428 },
-    "E9KD-N":  { nx: 0.206, ny: 0.428 },
+    "C-OK0R":  { nx: 0.331, ny: 0.423 },
+    "YKSC-A":  { nx: 0.354, ny: 0.424 },
+    "0-ARFO":  { nx: 0.314, ny: 0.441 },
+    "8W-OSE":  { nx: 0.336, ny: 0.443 },
+    "FIO1-8":  { nx: 0.351, ny: 0.443 },
+    "WQY-IQ":  { nx: 0.336, ny: 0.464 },
+    "E9KD-N":  { nx: 0.353, ny: 0.464 },
   };
 
   let fadePlaced = 0;
