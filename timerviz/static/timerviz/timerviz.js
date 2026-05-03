@@ -244,35 +244,6 @@ function buildMap() {
 
   svg.appendChild(createEl("g", { id: "tv-const-hulls" }));
 
-  // ── Gradient defs (one radial gradient per region) ──────────────────────────
-  const defs = createEl("defs", {});
-  const regionColors = {};
-  for (const sys of mapData.systems) regionColors[sys.regionName] = sys.regionColor;
-
-  for (const [regionName, color] of Object.entries(regionColors)) {
-    const gradId = "tv-grad-" + regionName.replace(/\s+/g, "-");
-    const grad = createEl("radialGradient", { id: gradId, cx: "38%", cy: "35%", r: "65%", fx: "38%", fy: "35%" });
-
-    const s0 = createEl("stop", { offset: "0%",   "stop-color": lighten(color, 0.55), "stop-opacity": "1" });
-    const s1 = createEl("stop", { offset: "60%",  "stop-color": color,                "stop-opacity": "0.85" });
-    const s2 = createEl("stop", { offset: "100%", "stop-color": darken(color, 0.45),  "stop-opacity": "1" });
-    grad.append(s0, s1, s2);
-    defs.appendChild(grad);
-
-    // Glow filter per region
-    const filtId = "tv-glow-" + regionName.replace(/\s+/g, "-");
-    const filt = createEl("filter", { id: filtId, x: "-40%", y: "-40%", width: "180%", height: "180%" });
-    const blur = createEl("feGaussianBlur", { stdDeviation: "6", result: "blur" });
-    const flood = createEl("feFlood", { "flood-color": color, "flood-opacity": "0.55", result: "flood" });
-    const comp = createEl("feComposite", { in: "flood", in2: "blur", operator: "in", result: "glow" });
-    const merge = createEl("feMerge", {});
-    const mNode1 = createEl("feMergeNode", { in: "glow" });
-    const mNode2 = createEl("feMergeNode", { in: "SourceGraphic" });
-    merge.append(mNode1, mNode2);
-    filt.append(blur, flood, comp, merge);
-    defs.appendChild(filt);
-  }
-  svg.appendChild(defs);
 
   // ── Edges ───────────────────────────────────────────────────────────────────
   const edgeG = createEl("g", { id: "tv-edges" });
@@ -321,6 +292,12 @@ function rgbToHex(r, g, b) {
   return "#" + [r, g, b].map((v) => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, "0")).join("");
 }
 
+function mixColor(hex, base, t) {
+  // blend hex toward base by factor t (0=hex, 1=base)
+  const [r1,g1,b1] = hexToRgb(hex), [r2,g2,b2] = hexToRgb(base);
+  return rgbToHex(r1*(1-t)+r2*t, g1*(1-t)+g2*t, b1*(1-t)+b2*t);
+}
+
 function lighten(hex, amt) {
   const [r, g, b] = hexToRgb(hex);
   return rgbToHex(r + (255 - r) * amt, g + (255 - g) * amt, b + (255 - b) * amt);
@@ -335,31 +312,30 @@ function darken(hex, amt) {
 
 function buildSystemNode(sys) {
   const cx = sys.nx * MAP_SIZE, cy = sys.ny * MAP_SIZE;
-  const gradId = "url(#tv-grad-" + sys.regionName.replace(/\s+/g, "-") + ")";
-  const filtId = "url(#tv-glow-" + sys.regionName.replace(/\s+/g, "-") + ")";
+  const fillColor   = mixColor(sys.regionColor, "#0d1117", 0.45); // region-tinted dark fill
+  const strokeColor = lighten(sys.regionColor, 0.5);               // bright stroke
 
   const g = createEl("g", {
     id: "tv-sys-" + sys.id, "data-system": sys.name,
     "data-sys-id": sys.id, class: "tv-system-group",
   });
 
-  // Outer glow ring (slightly larger, low opacity)
+  // Outer glow halo
   g.appendChild(createEl("ellipse", {
     class: "tv-node-glow", cx, cy,
-    rx: NODE_RX + 8, ry: NODE_RY + 8,
-    fill: sys.regionColor,
-    "fill-opacity": "0.18",
-    "filter": filtId,
+    rx: NODE_RX + 14, ry: NODE_RY + 14,
+    fill: sys.regionColor, "fill-opacity": "0.22",
+    style: `filter: blur(10px)`,
   }));
 
-  // Main node body with gradient fill
+  // Main node body
   g.appendChild(createEl("ellipse", {
     class: "tv-system-node", cx, cy, rx: NODE_RX, ry: NODE_RY,
-    fill: gradId,
-    stroke: lighten(sys.regionColor, 0.4),
-    "stroke-width": "3",
-    "data-base-stroke": lighten(sys.regionColor, 0.4),
+    fill: fillColor,
+    stroke: strokeColor, "stroke-width": "4",
+    "data-base-stroke": strokeColor,
     "data-region-color": sys.regionColor,
+    style: `filter: drop-shadow(0 0 8px ${sys.regionColor})`,
   }));
 
   // System name label

@@ -312,11 +312,15 @@
 
 /* System nodes */
 .tv-system-node {
-  stroke-width: 3;
+  transition: fill-opacity 0.15s;
+}
+
+.tv-system-group:hover .tv-system-node {
+  fill-opacity: 0.85;
 }
 
 .tv-system-node.tv-has-timer {
-  stroke-width: 4.5;
+  stroke-width: 6 !important;
 }
 
 .tv-node-glow {
