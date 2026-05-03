@@ -8,7 +8,7 @@ const CFG = window.TIMERVIZ_CONFIG;
 
 const REPAIR_MS = CFG.repairWindowMin * 60 * 1000;
 const SVG_NS    = "http://www.w3.org/2000/svg";
-const MAP_SIZE  = 4000;
+const MAP_SIZE  = 8000;
 const NODE_RX   = 52;
 const NODE_RY   = 28;
 const POLL_MS   = 10_000;
@@ -21,7 +21,6 @@ let customPositions   = {};
 let upcomingWindowMin = CFG.upcomingWindowMin;
 let filterObjective   = "";
 let hiddenRegions     = new Set(JSON.parse(localStorage.getItem("tv-hidden-regions") || "[]"));
-let spreadFactor      = parseFloat(localStorage.getItem("tv-spread") || "1.0");
 
 // Interaction state machine — one of: null | pan | selBox | singleDrag | groupDrag
 let ix = null;
@@ -51,7 +50,6 @@ async function boot() {
   }
 
   applyCustomPositions();
-  applySpread();
   buildMap();
   await fetchTimers();
   setInterval(fetchTimers, POLL_MS);
@@ -69,36 +67,6 @@ function applyCustomPositions() {
   }
 }
 
-function applySpread() {
-  for (const sys of mapData.systems) {
-    if (customPositions[sys.name]) continue; // custom-dragged nodes are absolute
-    sys.nx = 0.5 + (sys.baseNx - 0.5) * spreadFactor;
-    sys.ny = 0.5 + (sys.baseNy - 0.5) * spreadFactor;
-  }
-}
-
-function rebuildEdgePositions() {
-  for (const e of mapData.edges) {
-    const line = document.getElementById(`tv-edge-${e.a}-${e.b}`);
-    if (!line) continue;
-    const sA = mapData.systems.find((s) => s.id === e.a);
-    const sB = mapData.systems.find((s) => s.id === e.b);
-    if (!sA || !sB) continue;
-    line.setAttribute("x1", sA.nx * MAP_SIZE); line.setAttribute("y1", sA.ny * MAP_SIZE);
-    line.setAttribute("x2", sB.nx * MAP_SIZE); line.setAttribute("y2", sB.ny * MAP_SIZE);
-  }
-}
-
-function applySpreadAndRedraw(factor) {
-  spreadFactor = factor;
-  localStorage.setItem("tv-spread", factor);
-  applySpread();
-  for (const sys of mapData.systems) {
-    if (!customPositions[sys.name]) moveSystemNode(sys);
-  }
-  rebuildEdgePositions();
-  renderMapTimers();
-}
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
@@ -446,6 +414,8 @@ function moveSystemNode(sys) {
   const cx = sys.nx * MAP_SIZE, cy = sys.ny * MAP_SIZE;
   const g  = document.getElementById("tv-sys-" + sys.id);
   if (!g) return;
+  const glow = g.querySelector(".tv-node-glow");
+  if (glow) { glow.setAttribute("cx", cx); glow.setAttribute("cy", cy); }
   const ellipse = g.querySelector(".tv-system-node");
   if (ellipse) { ellipse.setAttribute("cx", cx); ellipse.setAttribute("cy", cy); }
   const lbl = g.querySelector(".tv-system-label");
@@ -748,19 +718,6 @@ function initControls() {
       clToggle.addEventListener("change", () => {
         showConstLabels = clToggle.checked;
         localStorage.setItem("tv-const-labels", showConstLabels);
-      });
-    }
-
-    // Spread slider
-    const slider  = document.getElementById("tv-spread-slider");
-    const sliderLabel = document.getElementById("tv-spread-value");
-    if (slider) {
-      slider.value = spreadFactor;
-      if (sliderLabel) sliderLabel.textContent = spreadFactor.toFixed(2) + "×";
-      slider.addEventListener("input", (e) => {
-        const v = parseFloat(e.target.value);
-        if (sliderLabel) sliderLabel.textContent = v.toFixed(2) + "×";
-        applySpreadAndRedraw(v);
       });
     }
 

@@ -148,129 +148,22 @@ function buildLayout(systems, constellations, edges) {
   }
   console.log(`  Placed ${placed.size} systems from Dotlan coordinates.`);
 
-  // Step 2: greedy crossing-minimizing placement for unplaced Fade systems
-  const unplaced = [...systems.values()].filter((s) => !placed.has(s.id));
-  console.log(`  Placing ${unplaced.length} unplaced Fade systems (crossing-minimizing)…`);
+  // Step 2: center + scale only the 90 Dotlan-placed systems
+  const TARGET_SPAN = 0.60;
+  const placedList = [...systems.values()].filter((s) => placed.has(s.id));
 
-  // Build adjacency
-  const adj = new Map();
-  for (const e of edges) {
-    const [a, b] = e.split("-").map(Number);
-    if (!adj.has(a)) adj.set(a, []); if (!adj.has(b)) adj.set(b, []);
-    adj.get(a).push(b); adj.get(b).push(a);
-  }
-
-  // Segment intersection test (excludes shared endpoints)
-  function segsIntersect(ax, ay, bx, by, cx, cy, dx, dy) {
-    const d1x = bx-ax, d1y = by-ay, d2x = dx-cx, d2y = dy-cy;
-    const denom = d1x*d2y - d1y*d2x;
-    if (Math.abs(denom) < 1e-12) return false;
-    const t = ((cx-ax)*d2y - (cy-ay)*d2x) / denom;
-    const u = ((cx-ax)*d1y - (cy-ay)*d1x) / denom;
-    return t > 0.02 && t < 0.98 && u > 0.02 && u < 0.98;
-  }
-
-  // Live list of placed edges (updated as we place each system)
-  const placedEdges = [];
-  for (const e of edges) {
-    const [a, b] = e.split("-").map(Number);
-    if (placed.has(a) && placed.has(b)) {
-      const sA = systems.get(a), sB = systems.get(b);
-      placedEdges.push([sA.nx, sA.ny, sB.nx, sB.ny]);
-    }
-  }
-
-  // Candidate ring: 6 distances × 24 angles = 144 candidates per system
-  const DISTS  = [0.035, 0.055, 0.075, 0.10, 0.13, 0.17];
-  const ANGLES = Array.from({ length: 24 }, (_, i) => (i / 24) * 2 * Math.PI);
-
-  // Sort by most placed neighbours first; re-sort each pass so newly placed nodes help later systems
-  for (let pass = 0; pass < 4; pass++) {
-    let placedThisPass = 0;
-    const remaining = unplaced.filter((s) => !placed.has(s.id));
-    remaining.sort((a, b) => {
-      const an = (adj.get(a.id)||[]).filter(id => placed.has(id)).length;
-      const bn = (adj.get(b.id)||[]).filter(id => placed.has(id)).length;
-      return bn - an;
-    });
-
-    for (const sys of remaining) {
-      const nbrs = (adj.get(sys.id)||[])
-        .filter(id => placed.has(id))
-        .map(id => systems.get(id));
-
-      if (nbrs.length === 0 && pass < 3) continue; // wait for neighbours to be placed
-
-      // Anchor = average of placed neighbours (or rough fallback)
-      const anchor = nbrs.length
-        ? { nx: nbrs.reduce((s,n)=>s+n.nx,0)/nbrs.length,
-            ny: nbrs.reduce((s,n)=>s+n.ny,0)/nbrs.length }
-        : { nx: LEFT + canW * 0.05, ny: TOP + canH * 0.5 };
-
-      // Generate & score candidates
-      let best = null, bestScore = Infinity;
-      for (const dist of DISTS) {
-        for (const angle of ANGLES) {
-          const cnx = clamp(anchor.nx + Math.cos(angle)*dist, LEFT+0.01, RIGHT-0.01);
-          const cny = clamp(anchor.ny + Math.sin(angle)*dist, TOP+0.01,  BOT-0.01);
-
-          // Skip if too close to any placed node
-          let tooClose = false;
-          for (const [, s] of systems) {
-            if (!placed.has(s.id)) continue;
-            if (Math.hypot(cnx-s.nx, cny-s.ny) < MIN_SEP) { tooClose = true; break; }
-          }
-          if (tooClose) continue;
-
-          // Count edge crossings introduced by placing sys here
-          let crossings = 0;
-          for (const nbr of nbrs) {
-            for (const [ex1,ey1,ex2,ey2] of placedEdges) {
-              if (segsIntersect(cnx,cny,nbr.nx,nbr.ny, ex1,ey1,ex2,ey2)) crossings++;
-            }
-          }
-
-          // Prefer extending left (Fade is west of Pure Blind)
-          const leftBias = (anchor.nx - cnx) * 3;
-          const score = crossings * 1000 - leftBias + dist * 5;
-          if (score < bestScore) { bestScore = score; best = { nx: cnx, ny: cny }; }
-        }
-      }
-
-      if (!best) {
-        // Fallback: just place at anchor shifted left, ignore spacing
-        best = { nx: clamp(anchor.nx - 0.05, LEFT, RIGHT), ny: anchor.ny };
-      }
-
-      sys.nx = best.nx; sys.ny = best.ny;
-      placed.add(sys.id);
-      placedThisPass++;
-
-      // Register new edges for future crossing checks
-      for (const nbr of nbrs) placedEdges.push([sys.nx, sys.ny, nbr.nx, nbr.ny]);
-    }
-    console.log(`    Pass ${pass+1}: placed ${placedThisPass}`);
-    if ([...unplaced].every(s => placed.has(s.id))) break;
-  }
-
-  const allList = [...systems.values()];
-
-  // Step 3: global separation — push ALL node pairs apart if overlapping
-  console.log(`  Running ${SEP_ITERS} separation iterations…`);
+  // Separation pass on placed systems only
   for (let iter = 0; iter < SEP_ITERS; iter++) {
-    for (let i = 0; i < allList.length; i++) {
-      for (let j = i + 1; j < allList.length; j++) {
-        const si = allList[i], sj = allList[j];
+    for (let i = 0; i < placedList.length; i++) {
+      for (let j = i + 1; j < placedList.length; j++) {
+        const si = placedList[i], sj = placedList[j];
         const dx = sj.nx - si.nx, dy = sj.ny - si.ny;
         const d = Math.hypot(dx, dy) || 1e-9;
         if (d < MIN_SEP) {
-          const push = (MIN_SEP - d) * 0.5;
+          const push = (MIN_SEP - d) * 0.25;
           const ux = dx / d, uy = dy / d;
-          // Unplaced nodes move freely; placed nodes move less
-          const wi = placed.has(si.id) ? 0.15 : 0.5;
-          const wj = placed.has(sj.id) ? 0.15 : 0.5;
-          si.nx -= ux * push * wi; si.ny -= uy * push * wi;
-          sj.nx += ux * push * wj; sj.ny += uy * push * wj;
+          si.nx -= ux * push; si.ny -= uy * push;
+          sj.nx += ux * push; sj.ny += uy * push;
           si.nx = clamp(si.nx, LEFT, RIGHT); si.ny = clamp(si.ny, TOP, BOT);
           sj.nx = clamp(sj.nx, LEFT, RIGHT); sj.ny = clamp(sj.ny, TOP, BOT);
         }
@@ -278,24 +171,85 @@ function buildLayout(systems, constellations, edges) {
     }
   }
 
-  // Step 4: scale layout to a compact cluster centered at (0.5, 0.5)
-  // TARGET_SPAN controls how much of the canvas the cluster occupies (0.0–1.0).
-  // The rest is empty drag space on all sides.
-  const TARGET_SPAN = 0.60;
-
-  const allNx = allList.map((s) => s.nx), allNy = allList.map((s) => s.ny);
-  const minNx = Math.min(...allNx), maxNx = Math.max(...allNx);
-  const minNy = Math.min(...allNy), maxNy = Math.max(...allNy);
-  const spanX = maxNx - minNx || 1, spanY = maxNy - minNy || 1;
-  const span  = Math.max(spanX, spanY);   // uniform scale preserves aspect ratio
+  // Scale + center
+  const pNx = placedList.map((s) => s.nx), pNy = placedList.map((s) => s.ny);
+  const minNx = Math.min(...pNx), maxNx = Math.max(...pNx);
+  const minNy = Math.min(...pNy), maxNy = Math.max(...pNy);
+  const span  = Math.max(maxNx - minNx, maxNy - minNy) || 1;
   const scale = TARGET_SPAN / span;
   const cxSrc = (minNx + maxNx) / 2, cySrc = (minNy + maxNy) / 2;
-
-  for (const s of allList) {
+  for (const s of placedList) {
     s.nx = 0.5 + (s.nx - cxSrc) * scale;
     s.ny = 0.5 + (s.ny - cySrc) * scale;
   }
-  console.log(`  Scaled to ${(TARGET_SPAN*100).toFixed(0)}% of canvas, centered at (0.5, 0.5)`);
+  console.log(`  90 Dotlan systems scaled to ${(TARGET_SPAN*100).toFixed(0)}%, centered at (0.5,0.5)`);
+
+  // Step 3: stamp hardcoded final positions for the 22 unplaced Fade systems.
+  // Positions calibrated from the screenshot, using the 5 border Fade systems as anchors.
+  // Constellation 20000539 — far-left cluster (I-UUI5, MPPA-A, GME-PQ, C4C-Z4, X5-UME, 8QMO-E)
+  // Constellation 20000537 — mid cluster  (K4YZ-Y, L-SCBU, O1Y-ED, X36Y-G, L-C3O7)
+  // Constellation 20000536 — near E-9ORY  (P-33KR, DO6H-Q, CR-IFM, HHK-VL)
+  // Constellation 20000538 — below VRH-H7 (C-OK0R, YKSC-A, 0-ARFO, 8W-OSE, FIO1-8, WQY-IQ, E9KD-N)
+  const FADE_POS = {
+    // Constellation 20000539
+    "I-UUI5":  { nx: 0.052, ny: 0.245 },
+    "MPPA-A":  { nx: 0.092, ny: 0.236 },
+    "GME-PQ":  { nx: 0.133, ny: 0.245 },
+    "C4C-Z4":  { nx: 0.171, ny: 0.255 },
+    "X5-UME":  { nx: 0.130, ny: 0.300 },
+    "8QMO-E":  { nx: 0.052, ny: 0.295 },
+    // Constellation 20000537
+    "K4YZ-Y":  { nx: 0.220, ny: 0.208 },
+    "L-SCBU":  { nx: 0.262, ny: 0.208 },
+    "O1Y-ED":  { nx: 0.242, ny: 0.242 },
+    "X36Y-G":  { nx: 0.202, ny: 0.302 },
+    "L-C3O7":  { nx: 0.180, ny: 0.270 },
+    // Constellation 20000536
+    "P-33KR":  { nx: 0.352, ny: 0.220 },
+    "DO6H-Q":  { nx: 0.380, ny: 0.240 },
+    "HHK-VL":  { nx: 0.392, ny: 0.268 },
+    "CR-IFM":  { nx: 0.358, ny: 0.280 },
+    // Constellation 20000538
+    "C-OK0R":  { nx: 0.162, ny: 0.345 },
+    "YKSC-A":  { nx: 0.208, ny: 0.348 },
+    "0-ARFO":  { nx: 0.128, ny: 0.382 },
+    "8W-OSE":  { nx: 0.172, ny: 0.385 },
+    "FIO1-8":  { nx: 0.202, ny: 0.385 },
+    "WQY-IQ":  { nx: 0.172, ny: 0.428 },
+    "E9KD-N":  { nx: 0.206, ny: 0.428 },
+  };
+
+  let fadePlaced = 0;
+  for (const sys of systems.values()) {
+    if (placed.has(sys.id)) continue;
+    const fp = FADE_POS[sys.name];
+    if (fp) { sys.nx = fp.nx; sys.ny = fp.ny; fadePlaced++; }
+    else     { sys.nx = 0.10; sys.ny = 0.50; } // safety fallback
+  }
+  console.log(`  ${fadePlaced} Fade systems placed from hardcoded positions`);
+
+  const allList = [...systems.values()];
+
+  // Step 4: light global separation to clear any remaining overlaps
+  for (let iter = 0; iter < 100; iter++) {
+    for (let i = 0; i < allList.length; i++) {
+      for (let j = i + 1; j < allList.length; j++) {
+        const si = allList[i], sj = allList[j];
+        const dx = sj.nx - si.nx, dy = sj.ny - si.ny;
+        const d = Math.hypot(dx, dy) || 1e-9;
+        if (d < MIN_SEP) {
+          const push = (MIN_SEP - d) * 0.3;
+          const ux = dx / d, uy = dy / d;
+          const wi = placed.has(si.id) ? 0.1 : 0.5;
+          const wj = placed.has(sj.id) ? 0.1 : 0.5;
+          si.nx -= ux * push * wi; si.ny -= uy * push * wi;
+          sj.nx += ux * push * wj; sj.ny += uy * push * wj;
+          si.nx = clamp(si.nx, 0.01, 0.99); si.ny = clamp(si.ny, 0.01, 0.99);
+          sj.nx = clamp(sj.nx, 0.01, 0.99); sj.ny = clamp(sj.ny, 0.01, 0.99);
+        }
+      }
+    }
+  }
 
   // Step 5: recompute constellation centres
   for (const [, c] of constellations) {

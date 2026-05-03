@@ -102,17 +102,6 @@
   cursor: pointer;
 }
 
-.tv-spread-row {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.tv-spread-row .form-range {
-  accent-color: #58a6ff;
-  cursor: pointer;
-}
-
 .tv-drag-hint {
   margin-top: 6px;
   font-size: 0.75rem;
