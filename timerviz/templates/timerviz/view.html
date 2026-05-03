@@ -63,6 +63,11 @@
       <button id="tv-zoom-in"    class="btn btn-sm btn-secondary" title="Zoom in">+</button>
       <button id="tv-zoom-out"   class="btn btn-sm btn-secondary" title="Zoom out">−</button>
       <button id="tv-zoom-reset" class="btn btn-sm btn-secondary" title="Reset view">⌂</button>
+      {% if can_configure %}
+      <div class="tv-toolbar-sep"></div>
+      <button id="tv-select-toggle" class="btn btn-sm btn-secondary" title="Drag background to select systems, then drag any selected node to move the group. Shift+click to add to selection.">Select</button>
+      <button id="tv-clear-selection" class="btn btn-sm btn-outline-secondary" title="Clear selection">✕</button>
+      {% endif %}
       <span id="tv-region-label"></span>
     </div>
     <svg id="tv-map" xmlns="http://www.w3.org/2000/svg"></svg>

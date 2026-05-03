@@ -246,6 +246,13 @@
   flex-shrink: 0;
 }
 
+.tv-toolbar-sep {
+  width: 1px;
+  height: 20px;
+  background: #30363d;
+  margin: 0 2px;
+}
+
 #tv-region-label {
   font-size: 0.8rem;
   color: #8b949e;
@@ -345,6 +352,22 @@
 .tv-badge-repairing .tv-map-badge-rect { fill: #da3633; }
 .tv-badge-elapsed   .tv-map-badge-rect { fill: #e3b341; cursor: pointer; }
 .tv-badge-confirmed .tv-map-badge-rect { display: none; }
+
+/* Selection rubber-band box */
+.tv-sel-box {
+  fill: rgba(88, 166, 255, 0.06);
+  stroke: #58a6ff;
+  stroke-width: 3;
+  stroke-dasharray: 10 5;
+  pointer-events: none;
+}
+
+/* Selected node highlight ring */
+.tv-system-group.tv-selected .tv-system-node {
+  stroke: #e3b341 !important;
+  stroke-width: 6 !important;
+  filter: drop-shadow(0 0 6px rgba(227,179,65,0.6));
+}
 
 /* Timer state node outlines */
 .tv-node-upcoming   { stroke: #1f6feb !important; }
