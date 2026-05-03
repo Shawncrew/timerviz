@@ -312,28 +312,34 @@
 
 /* System nodes */
 .tv-system-node {
-  stroke-width: 1.5;
-  fill: #0d1117;
+  stroke-width: 3;
 }
 
 .tv-system-node.tv-has-timer {
-  fill: #131a24;
-  stroke-width: 2.5;
+  stroke-width: 4.5;
+}
+
+.tv-node-glow {
+  pointer-events: none;
 }
 
 .tv-system-label {
-  fill: #6e7681;
+  fill: #ffffff;
   font-size: 20px;
+  font-weight: 600;
   text-anchor: middle;
   dominant-baseline: middle;
   pointer-events: none;
   font-family: "Segoe UI", system-ui, sans-serif;
   user-select: none;
+  paint-order: stroke;
+  stroke: rgba(0,0,0,0.7);
+  stroke-width: 5px;
+  stroke-linejoin: round;
 }
 
 .tv-system-label.tv-has-timer {
-  fill: #e6edf3;
-  font-weight: 600;
+  fill: #ffffff;
 }
 
 /* Timer badge on map */
