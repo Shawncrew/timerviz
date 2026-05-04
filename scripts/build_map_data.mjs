@@ -28,12 +28,11 @@ const REGIONS = [
 ];
 
 // ── Canvas sectors (nx/ny ranges for each region group) ─────────────────────
-// Sectors scaled to 40% of previous size (8000→20000 canvas, same visual density).
-// Each boundary = 0.5 + (old - 0.5) * 0.4
+// Sectors at 20% of original size, centered at 0.5 on 20000-unit canvas.
 const SECTOR = {
-  "PB_FADE": { l: 0.292, r: 0.512, t: 0.484, b: 0.692 },
-  "Deklein":  { l: 0.292, r: 0.892, t: 0.308, b: 0.476 },
-  "Tribute":  { l: 0.520, r: 0.892, t: 0.484, b: 0.692 },
+  "PB_FADE": { l: 0.396, r: 0.506, t: 0.492, b: 0.596 },
+  "Deklein":  { l: 0.396, r: 0.696, t: 0.404, b: 0.488 },
+  "Tribute":  { l: 0.510, r: 0.696, t: 0.492, b: 0.596 },
 };
 
 // ── Dotlan Pure Blind SVG coords (1024×768) ──────────────────────────────────
@@ -198,7 +197,7 @@ const DOTLAN_TRIB = {
     "Y5J-EU","8TPX-N","AZBR-2","V-OJEN"]),
 };
 
-const MIN_SEP   = 0.004; // scaled for 20000-unit canvas (was 0.010 at 8000)
+const MIN_SEP   = 0.0025;
 const SEP_ITERS = 300;
 
 // ── Cache ─────────────────────────────────────────────────────────────────────
