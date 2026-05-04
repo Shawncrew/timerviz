@@ -2,13 +2,12 @@ import json
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.db import models
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views import View
 from django.views.generic import TemplateView
 
-from allianceauth.timerboard.models import Timer
+from structuretimers.models import Timer
 
 from .models import SystemPosition, TimerRepairState
 
@@ -42,33 +41,44 @@ class TimerDataView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
         confirmed_ids = set(TimerRepairState.objects.values_list("timer_id", flat=True))
 
-        qs = Timer.objects.filter(eve_time__gte=now - timezone.timedelta(hours=24))
+        # Show timers from last 24 hours onward
+        qs = Timer.objects.select_related(
+            "eve_solar_system", "structure_type"
+        ).filter(date__gte=now - timezone.timedelta(hours=24))
 
-        if not request.user.has_perm("auth.timer_management"):
+        # Visibility filtering
+        # UN = unrestricted, AL = alliance only, CO = corporation only
+        if not request.user.has_perm("structuretimers.manage_timer"):
             try:
-                user_corp = request.user.profile.main_character.corporation_id
-                qs = qs.filter(
-                    models.Q(corp_timer=False)
-                    | models.Q(eve_corp__corporation_id=user_corp)
-                )
+                char = request.user.profile.main_character
+                user_corp_id = char.corporation_id
+                user_alliance_id = char.alliance_id
             except Exception:
-                qs = qs.filter(corp_timer=False)
+                user_corp_id = None
+                user_alliance_id = None
 
-        timers = [
-            {
+            from django.db.models import Q
+            qs = qs.filter(
+                Q(visibility="UN")
+                | (Q(visibility="CO") & Q(eve_corporation__corporation_id=user_corp_id) if user_corp_id else Q(pk__in=[]))
+                | (Q(visibility="AL") & Q(eve_alliance__alliance_id=user_alliance_id) if user_alliance_id else Q(pk__in=[]))
+            )
+
+        timers = []
+        for t in qs.order_by("date"):
+            timers.append({
                 "id": t.pk,
-                "eve_time": t.eve_time.isoformat(),
-                "system": t.system,
-                "planet_moon": t.planet_moon,
-                "structure": t.structure,
-                "objective": t.objective,
-                "timer_type": t.timer_type,
-                "details": t.details,
-                "important": t.important,
+                "eve_time": t.date.isoformat(),
+                "system": t.eve_solar_system.name if t.eve_solar_system else "",
+                "planet_moon": t.location_details or "",
+                "structure": t.structure_type.name if t.structure_type else "",
+                "structure_name": t.structure_name or "",
+                "objective": t.get_objective_display(),
+                "timer_type": t.get_timer_type_display(),
+                "details": t.details_notes or "",
+                "important": t.is_important,
                 "confirmed": t.pk in confirmed_ids,
-            }
-            for t in qs.order_by("eve_time")
-        ]
+            })
 
         return JsonResponse({
             "timers": timers,
