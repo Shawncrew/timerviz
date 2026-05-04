@@ -20,7 +20,8 @@ let mapData           = null;
 let customPositions   = {};
 let upcomingWindowMin = parseInt(localStorage.getItem("tv-upcoming-window") || CFG.upcomingWindowMin, 10);
 let filterObjective   = "";
-let hiddenRegions     = new Set(JSON.parse(localStorage.getItem("tv-hidden-regions") || "[]"));
+let hiddenRegions       = new Set(JSON.parse(localStorage.getItem("tv-hidden-regions") || "[]"));
+let regionColorOverrides = JSON.parse(localStorage.getItem("tv-region-colors") || "{}");
 
 // Interaction state machine — one of: null | pan | selBox | singleDrag | groupDrag
 let ix = null;
@@ -50,6 +51,7 @@ async function boot() {
   }
 
   applyCustomPositions();
+  applyRegionColorOverrides();
   buildMap();
   fitView();
   await fetchTimers();
@@ -66,6 +68,30 @@ function applyCustomPositions() {
       sys.ny = customPositions[sys.name].ny;
     }
   }
+}
+
+function applyRegionColorOverrides() {
+  for (const reg of (mapData.regions || [])) {
+    if (regionColorOverrides[reg.name]) reg.color = regionColorOverrides[reg.name];
+  }
+  for (const sys of mapData.systems) {
+    if (regionColorOverrides[sys.regionName]) sys.regionColor = regionColorOverrides[sys.regionName];
+  }
+  if (mapData.constellations) {
+    for (const c of Object.values(mapData.constellations)) {
+      if (regionColorOverrides[c.regionName]) c.color = regionColorOverrides[c.regionName];
+    }
+  }
+}
+
+function rebuildMapColors() {
+  // Re-apply overrides then rebuild the whole map SVG
+  applyRegionColorOverrides();
+  const svg = document.getElementById("tv-map");
+  svg.innerHTML = "";
+  buildMap();
+  fitView();
+  renderMapTimers();
 }
 
 
@@ -755,7 +781,23 @@ function initControls() {
         });
         const pip = document.createElement("span");
         pip.className = "tv-region-pip"; pip.style.background = reg.color;
-        label.append(cb, pip, document.createTextNode(" " + reg.name));
+
+        // Color picker
+        const colorInput = document.createElement("input");
+        colorInput.type = "color";
+        colorInput.value = regionColorOverrides[reg.name] || reg.color;
+        colorInput.className = "tv-region-color-picker";
+        colorInput.title = "Change " + reg.name + " color";
+        colorInput.addEventListener("input", (e) => {
+          pip.style.background = e.target.value;
+        });
+        colorInput.addEventListener("change", (e) => {
+          regionColorOverrides[reg.name] = e.target.value;
+          localStorage.setItem("tv-region-colors", JSON.stringify(regionColorOverrides));
+          rebuildMapColors();
+        });
+
+        label.append(cb, pip, document.createTextNode(" " + reg.name), colorInput);
         container.appendChild(label);
       }
     }

@@ -18,7 +18,7 @@ const ESI        = "https://esi.evetech.net/latest";
 
 const REGIONS = [
   { id: 10000046, name: "Fade",       color: "#8957e5" },
-  { id: 10000023, name: "Pure Blind", color: "#1f6feb" },
+  { id: 10000023, name: "Pure Blind", color: "#2ecc71" },
 ];
 
 // ── Dotlan Pure Blind SVG coordinates (1024 × 768) ───────────────────────────
