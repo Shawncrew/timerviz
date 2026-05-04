@@ -8,7 +8,7 @@ const CFG = window.TIMERVIZ_CONFIG;
 
 const REPAIR_MS = CFG.repairWindowMin * 60 * 1000;
 const SVG_NS    = "http://www.w3.org/2000/svg";
-const MAP_SIZE  = 8000;
+const MAP_SIZE  = 20000;
 const NODE_RX   = 52;
 const NODE_RY   = 28;
 const POLL_MS   = 10_000;
@@ -711,7 +711,7 @@ function fitView() {
 }
 
 function zoom(factor, cx, cy) {
-  const newW = Math.min(16000, Math.max(400, vb.w * factor));
+  const newW = Math.min(80000, Math.max(800, vb.w * factor));
   const pX = cx ?? vb.x + vb.w / 2, pY = cy ?? vb.y + vb.h / 2;
   vb.x = pX - (pX - vb.x) * (newW / vb.w);
   vb.y = pY - (pY - vb.y) * (newW / vb.h);
