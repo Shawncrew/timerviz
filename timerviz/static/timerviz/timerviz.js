@@ -392,18 +392,35 @@ function renderMapTimers() {
     if (nodeEl) { nodeEl.setAttribute("stroke", stateStroke(dominant)); nodeEl.className.baseVal = "tv-system-node tv-has-timer tv-node-" + dominant; }
     if (labelEl) labelEl.className.baseVal = "tv-system-label tv-has-timer";
 
-    const cx = sys.nx * MAP_SIZE, baseCy = sys.ny * MAP_SIZE + NODE_RY + 12;
-    const badgeW = 160, badgeH = 44, gap = 6;
-    entries.forEach(({ t, state }, i) => {
-      const bx = cx - badgeW / 2, by = baseCy + i * (badgeH + gap);
-      const g = createEl("g", { class: "tv-map-timer-badge tv-badge-" + state, "data-timer-id": t.id });
-      g.appendChild(createEl("rect", { class: "tv-map-badge-rect", x: bx, y: by, width: badgeW, height: badgeH, rx: 6, ry: 6 }));
-      const txt = createEl("text", { class: "tv-map-badge-text", x: bx + badgeW / 2, y: by + badgeH / 2 });
-      txt.textContent = shortCountdown(t, now);
-      g.appendChild(txt);
-      if (state === "elapsed" && CFG.canConfirm) { g.style.cursor = "pointer"; g.addEventListener("click", () => confirmRepair(t.id)); }
-      badgeG.appendChild(g);
-    });
+    // Indicator dot: top-right corner of node, colour = dominant state
+    const cx = sys.nx * MAP_SIZE, cy = sys.ny * MAP_SIZE;
+    const dotR = 18;
+    const dotX = cx + NODE_RX - 4, dotY = cy - NODE_RY + 4;
+    const dotColor = stateStroke(dominant);
+
+    const dotG = createEl("g", { class: "tv-map-timer-badge tv-badge-" + dominant });
+    dotG.appendChild(createEl("circle", {
+      class: "tv-indicator-dot",
+      cx: dotX, cy: dotY, r: dotR,
+      fill: dotColor,
+      style: `filter: drop-shadow(0 0 6px ${dotColor})`,
+    }));
+
+    // Count bubble if more than 1 timer
+    if (entries.length > 1) {
+      const countTxt = createEl("text", { class: "tv-indicator-count", x: dotX, y: dotY });
+      countTxt.textContent = entries.length;
+      dotG.appendChild(countTxt);
+    }
+
+    // Elapsed timers are clickable — use the first elapsed one
+    const firstElapsed = entries.find((e) => e.state === "elapsed");
+    if (firstElapsed && CFG.canConfirm) {
+      dotG.style.cursor = "pointer";
+      dotG.addEventListener("click", () => confirmRepair(firstElapsed.t.id));
+    }
+
+    badgeG.appendChild(dotG);
   }
 }
 
@@ -427,16 +444,14 @@ function moveSystemNode(sys) {
   document.querySelectorAll(`line[data-sys-a="${sys.id}"]`).forEach((l) => { l.setAttribute("x1", cx); l.setAttribute("y1", cy); });
   document.querySelectorAll(`line[data-sys-b="${sys.id}"]`).forEach((l) => { l.setAttribute("x2", cx); l.setAttribute("y2", cy); });
 
+  // Move the indicator dot (top-right corner of node)
   const badgeG = document.getElementById("tv-badges-" + sys.id);
   if (badgeG) {
-    const baseCy = cy + NODE_RY + 12, badgeW = 108, badgeH = 28, gap = 4;
-    badgeG.querySelectorAll(".tv-map-timer-badge").forEach((badge, i) => {
-      const rect = badge.querySelector(".tv-map-badge-rect");
-      const txt  = badge.querySelector(".tv-map-badge-text");
-      const bx = cx - badgeW / 2, by = baseCy + i * (badgeH + gap);
-      if (rect) { rect.setAttribute("x", bx); rect.setAttribute("y", by); }
-      if (txt)  { txt.setAttribute("x", bx + badgeW / 2); txt.setAttribute("y", by + badgeH / 2); }
-    });
+    const dotX = cx + NODE_RX - 4, dotY = cy - NODE_RY + 4;
+    const dot = badgeG.querySelector(".tv-indicator-dot");
+    if (dot) { dot.setAttribute("cx", dotX); dot.setAttribute("cy", dotY); }
+    const countTxt = badgeG.querySelector(".tv-indicator-count");
+    if (countTxt) { countTxt.setAttribute("x", dotX); countTxt.setAttribute("y", dotY); }
   }
 }
 

@@ -332,13 +332,14 @@
   fill: #ffffff;
 }
 
-/* Timer badge on map */
-.tv-map-badge-rect {
-  rx: 4; ry: 4;
+/* Timer indicator dot (top-right corner of node) */
+.tv-indicator-dot {
+  stroke: rgba(0,0,0,0.5);
   stroke-width: 3;
 }
-.tv-map-badge-text {
-  font-size: 22px;
+
+.tv-indicator-count {
+  font-size: 20px;
   font-weight: 700;
   text-anchor: middle;
   dominant-baseline: middle;
@@ -346,16 +347,7 @@
   pointer-events: none;
   font-family: "Segoe UI", system-ui, sans-serif;
   user-select: none;
-  paint-order: stroke;
-  stroke: rgba(0,0,0,0.6);
-  stroke-width: 4px;
-  stroke-linejoin: round;
 }
-
-.tv-badge-upcoming  .tv-map-badge-rect { fill: #1f6feb; stroke: #6ab0ff; filter: drop-shadow(0 0 6px #1f6feb); }
-.tv-badge-repairing .tv-map-badge-rect { fill: #da3633; stroke: #ff6b68; filter: drop-shadow(0 0 6px #da3633); }
-.tv-badge-elapsed   .tv-map-badge-rect { fill: #e3b341; stroke: #ffd980; filter: drop-shadow(0 0 6px #e3b341); cursor: pointer; }
-.tv-badge-confirmed .tv-map-badge-rect { display: none; }
 
 /* Selection rubber-band box */
 .tv-sel-box {
@@ -379,11 +371,11 @@
 .tv-node-elapsed    { stroke: #ffd980 !important; stroke-width: 7 !important; filter: drop-shadow(0 0 10px #e3b341); }
 .tv-node-confirmed  { stroke: #3fb950 !important; stroke-width: 5 !important; }
 
-/* Pulse animation on upcoming badges */
-.tv-badge-upcoming .tv-map-badge-rect {
-  animation: tv-badge-pulse 2s ease-in-out infinite;
-}
-@keyframes tv-badge-pulse {
+/* Pulse animations on indicator dots */
+.tv-badge-upcoming  .tv-indicator-dot { animation: tv-dot-pulse 2s ease-in-out infinite; }
+.tv-badge-repairing .tv-indicator-dot { animation: tv-dot-pulse 0.8s ease-in-out infinite; }
+
+@keyframes tv-dot-pulse {
   0%, 100% { opacity: 1; }
-  50%       { opacity: 0.7; }
+  50%       { opacity: 0.45; }
 }
