@@ -18,7 +18,7 @@ const POLL_MS   = 10_000;
 let timers            = [];
 let mapData           = null;
 let customPositions   = {};
-let upcomingWindowMin = CFG.upcomingWindowMin;
+let upcomingWindowMin = parseInt(localStorage.getItem("tv-upcoming-window") || CFG.upcomingWindowMin, 10);
 let filterObjective   = "";
 let hiddenRegions     = new Set(JSON.parse(localStorage.getItem("tv-hidden-regions") || "[]"));
 
@@ -74,8 +74,11 @@ async function fetchTimers() {
   try {
     const data = await fetch(CFG.timerDataUrl).then((r) => r.json());
     timers            = data.timers;
-    upcomingWindowMin = data.upcoming_window_min;
-    document.getElementById("tv-upcoming-window").value = upcomingWindowMin;
+    // Only use server default if user hasn't set a local preference
+    if (!localStorage.getItem("tv-upcoming-window")) {
+      upcomingWindowMin = data.upcoming_window_min;
+      document.getElementById("tv-upcoming-window").value = upcomingWindowMin;
+    }
     render();
   } catch (e) {
     console.error("timerviz: fetch failed", e);
@@ -673,7 +676,7 @@ function initControls() {
   });
   document.getElementById("tv-upcoming-window").addEventListener("change", (e) => {
     const v = parseInt(e.target.value, 10);
-    if (!isNaN(v) && v >= 1) { upcomingWindowMin = v; render(); }
+    if (!isNaN(v) && v >= 1) { upcomingWindowMin = v; localStorage.setItem("tv-upcoming-window", v); render(); }
   });
 
   if (CFG.canConfigure) {
