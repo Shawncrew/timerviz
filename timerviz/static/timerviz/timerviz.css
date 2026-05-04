@@ -179,6 +179,18 @@
   color: #fff;
 }
 
+.tv-card-name {
+  font-size: 0.80rem;
+  color: #c9d1d9;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.tv-card-owner {
+  color: #6e7681;
+  font-style: italic;
+}
+
 .tv-card-meta {
   font-size: 0.73rem;
   color: #8b949e;

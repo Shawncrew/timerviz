@@ -51,6 +51,7 @@ async function boot() {
 
   applyCustomPositions();
   buildMap();
+  fitView();
   await fetchTimers();
   setInterval(fetchTimers, POLL_MS);
   setInterval(tick, 1000);
@@ -223,13 +224,24 @@ function renderSidebar() {
     card.className = "tv-timer-card tv-" + state;
     card.dataset.timerId = t.id;
     const sys = mapData?.systems.find((s) => s.name === t.system);
+    // Only show objective badge if it's not undefined
+    const objBadge = (t.objective && t.objective !== "UN")
+      ? `<span class="tv-obj-badge" style="background:${objectiveColor(t.objective)}">${escHtml(t.objective_display)}</span>`
+      : "";
+
+    // Location: prefer structure_name (has planet embedded), fall back to planet_moon
+    const location = t.structure_name || t.planet_moon || "";
+
     card.innerHTML = `
       <div class="tv-card-system">
         <span class="tv-region-pip" style="background:${sys?.regionColor ?? "#8b949e"}"></span>
-        ${escHtml(t.system)}
-        ${t.objective ? `<span class="tv-obj-badge" style="background:${objectiveColor(t.objective)}">${escHtml(t.objective)}</span>` : ""}
+        <strong>${escHtml(t.system)}</strong>${objBadge}
       </div>
-      <div class="tv-card-meta">${escHtml(t.structure)}${t.timer_type ? " · " + escHtml(t.timer_type) : ""}${t.planet_moon ? " · " + escHtml(t.planet_moon) : ""}</div>
+      ${location ? `<div class="tv-card-name">${escHtml(location)}</div>` : ""}
+      <div class="tv-card-meta">
+        ${escHtml(t.structure)}${t.timer_type ? " · " + escHtml(t.timer_type) : ""}
+      </div>
+      ${t.owner ? `<div class="tv-card-meta tv-card-owner">${escHtml(t.owner)}</div>` : ""}
       ${t.details ? `<div class="tv-card-meta">${escHtml(t.details)}</div>` : ""}
       <div class="tv-card-countdown">${countdownText(t, now)}</div>
       ${state === "elapsed" && CFG.canConfirm ? `<div class="tv-card-confirm-hint">↑ Click to confirm repaired</div>` : ""}
@@ -392,19 +404,23 @@ function renderMapTimers() {
     if (nodeEl) { nodeEl.setAttribute("stroke", stateStroke(dominant)); nodeEl.className.baseVal = "tv-system-node tv-has-timer tv-node-" + dominant; }
     if (labelEl) labelEl.className.baseVal = "tv-system-label tv-has-timer";
 
-    const cx = sys.nx * MAP_SIZE, baseCy = sys.ny * MAP_SIZE + NODE_RY + 14;
-    const badgeW = 180, badgeH = 46, gap = 8;
+    // Show a single aggregated badge: soonest timer + count if multiple
+    const cx = sys.nx * MAP_SIZE, by = sys.ny * MAP_SIZE + NODE_RY + 14;
+    const badgeW = 180, badgeH = 46;
+    const bx = cx - badgeW / 2;
+    const { t: soonest, state: soonestState } = entries[0];
+    const count = entries.length;
 
-    entries.forEach(({ t, state }, i) => {
-      const bx = cx - badgeW / 2, by = baseCy + i * (badgeH + gap);
-      const g = createEl("g", { class: "tv-map-timer-badge tv-badge-" + state, "data-timer-id": t.id });
-      g.appendChild(createEl("rect", { class: "tv-map-badge-rect", x: bx, y: by, width: badgeW, height: badgeH, rx: 8, ry: 8 }));
-      const txt = createEl("text", { class: "tv-map-badge-text", x: cx, y: by + badgeH / 2 });
-      txt.textContent = shortCountdown(t, now);
-      g.appendChild(txt);
-      if (state === "elapsed" && CFG.canConfirm) { g.style.cursor = "pointer"; g.addEventListener("click", () => confirmRepair(t.id)); }
-      badgeG.appendChild(g);
-    });
+    const g = createEl("g", { class: "tv-map-timer-badge tv-badge-" + dominant, "data-timer-id": soonest.id });
+    g.appendChild(createEl("rect", { class: "tv-map-badge-rect", x: bx, y: by, width: badgeW, height: badgeH, rx: 8, ry: 8 }));
+    const label = count > 1
+      ? `${shortCountdown(soonest, now)} +${count - 1}`
+      : shortCountdown(soonest, now);
+    const txt = createEl("text", { class: "tv-map-badge-text", x: cx, y: by + badgeH / 2 });
+    txt.textContent = label;
+    g.appendChild(txt);
+    if (soonestState === "elapsed" && CFG.canConfirm) { g.style.cursor = "pointer"; g.addEventListener("click", () => confirmRepair(soonest.id)); }
+    badgeG.appendChild(g);
   }
 }
 
@@ -626,6 +642,36 @@ function applyViewBox() {
   document.getElementById("tv-map").setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
 }
 
+function fitView() {
+  const svg = document.getElementById("tv-map");
+  const pad = MAP_SIZE * 0.04;
+
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (const sys of mapData.systems) {
+    const x = sys.nx * MAP_SIZE, y = sys.ny * MAP_SIZE;
+    minX = Math.min(minX, x - NODE_RX);
+    maxX = Math.max(maxX, x + NODE_RX);
+    minY = Math.min(minY, y - NODE_RY);
+    maxY = Math.max(maxY, y + NODE_RY);
+  }
+
+  const cW = maxX - minX + 2 * pad;
+  const cH = maxY - minY + 2 * pad;
+  const rect = svg.getBoundingClientRect();
+  const aspect = rect.width / (rect.height || 1);
+
+  let vbW, vbH;
+  if (cW / cH > aspect) { vbW = cW; vbH = cW / aspect; }
+  else                   { vbH = cH; vbW = cH * aspect; }
+
+  vb = {
+    x: (minX - pad) - (vbW - cW) / 2,
+    y: (minY - pad) - (vbH - cH) / 2,
+    w: vbW, h: vbH,
+  };
+  applyViewBox();
+}
+
 function zoom(factor, cx, cy) {
   const newW = Math.min(16000, Math.max(400, vb.w * factor));
   const pX = cx ?? vb.x + vb.w / 2, pY = cy ?? vb.y + vb.h / 2;
@@ -668,9 +714,7 @@ function updateSelectionLabel() {
 function initControls() {
   document.getElementById("tv-zoom-in").addEventListener("click",    () => zoom(0.75));
   document.getElementById("tv-zoom-out").addEventListener("click",   () => zoom(1.35));
-  document.getElementById("tv-zoom-reset").addEventListener("click", () => {
-    vb = { x: 0, y: 0, w: MAP_SIZE, h: MAP_SIZE }; applyViewBox();
-  });
+  document.getElementById("tv-zoom-reset").addEventListener("click", () => fitView());
 
   document.getElementById("tv-filter-objective").addEventListener("change", (e) => {
     filterObjective = e.target.value; render();
