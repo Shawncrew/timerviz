@@ -44,7 +44,7 @@ class TimerDataView(LoginRequiredMixin, PermissionRequiredMixin, View):
         # Show timers from last 24 hours onward
         qs = Timer.objects.select_related(
             "eve_solar_system", "structure_type"
-        ).filter(date__gte=now - timezone.timedelta(hours=24))
+        ).filter(date__gte=now - timezone.timedelta(hours=24)).exclude(timer_type="MM")
 
         # Visibility filtering
         # UN = unrestricted, AL = alliance only, CO = corporation only
