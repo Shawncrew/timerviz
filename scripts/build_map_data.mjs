@@ -191,7 +191,7 @@ function buildLayout(systems, constellations, edges) {
   // Constellation 20000536 — near E-9ORY  (P-33KR, DO6H-Q, CR-IFM, HHK-VL)
   // Constellation 20000538 — below VRH-H7 (C-OK0R, YKSC-A, 0-ARFO, 8W-OSE, FIO1-8, WQY-IQ, E9KD-N)
   // Positions scaled to match TARGET_SPAN=0.30 on 8000×8000 canvas.
-  // Formula: new = 0.5 + (old - 0.5) * 0.5  (halve distance from centre)
+  // Formula: new = 0.5 + (original_0.60_pos - 0.5) * 0.5
   const FADE_POS = {
     // Constellation 20000539
     "I-UUI5":  { nx: 0.276, ny: 0.373 },

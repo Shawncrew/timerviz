@@ -333,20 +333,28 @@
 }
 
 /* Timer badge on map */
-.tv-map-badge-rect { rx: 3; ry: 3; }
+.tv-map-badge-rect {
+  rx: 4; ry: 4;
+  stroke-width: 3;
+}
 .tv-map-badge-text {
-  font-size: 16px;
+  font-size: 22px;
+  font-weight: 700;
   text-anchor: middle;
   dominant-baseline: middle;
   fill: #fff;
   pointer-events: none;
   font-family: "Segoe UI", system-ui, sans-serif;
   user-select: none;
+  paint-order: stroke;
+  stroke: rgba(0,0,0,0.6);
+  stroke-width: 4px;
+  stroke-linejoin: round;
 }
 
-.tv-badge-upcoming  .tv-map-badge-rect { fill: #1f6feb; }
-.tv-badge-repairing .tv-map-badge-rect { fill: #da3633; }
-.tv-badge-elapsed   .tv-map-badge-rect { fill: #e3b341; cursor: pointer; }
+.tv-badge-upcoming  .tv-map-badge-rect { fill: #1f6feb; stroke: #6ab0ff; filter: drop-shadow(0 0 6px #1f6feb); }
+.tv-badge-repairing .tv-map-badge-rect { fill: #da3633; stroke: #ff6b68; filter: drop-shadow(0 0 6px #da3633); }
+.tv-badge-elapsed   .tv-map-badge-rect { fill: #e3b341; stroke: #ffd980; filter: drop-shadow(0 0 6px #e3b341); cursor: pointer; }
 .tv-badge-confirmed .tv-map-badge-rect { display: none; }
 
 /* Selection rubber-band box */
@@ -366,7 +374,16 @@
 }
 
 /* Timer state node outlines */
-.tv-node-upcoming   { stroke: #1f6feb !important; }
-.tv-node-repairing  { stroke: #da3633 !important; }
-.tv-node-elapsed    { stroke: #e3b341 !important; }
-.tv-node-confirmed  { stroke: #238636 !important; }
+.tv-node-upcoming   { stroke: #6ab0ff !important; stroke-width: 7 !important; filter: drop-shadow(0 0 10px #1f6feb); }
+.tv-node-repairing  { stroke: #ff6b68 !important; stroke-width: 7 !important; filter: drop-shadow(0 0 10px #da3633); }
+.tv-node-elapsed    { stroke: #ffd980 !important; stroke-width: 7 !important; filter: drop-shadow(0 0 10px #e3b341); }
+.tv-node-confirmed  { stroke: #3fb950 !important; stroke-width: 5 !important; }
+
+/* Pulse animation on upcoming badges */
+.tv-badge-upcoming .tv-map-badge-rect {
+  animation: tv-badge-pulse 2s ease-in-out infinite;
+}
+@keyframes tv-badge-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.7; }
+}

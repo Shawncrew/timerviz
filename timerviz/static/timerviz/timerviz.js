@@ -393,7 +393,7 @@ function renderMapTimers() {
     if (labelEl) labelEl.className.baseVal = "tv-system-label tv-has-timer";
 
     const cx = sys.nx * MAP_SIZE, baseCy = sys.ny * MAP_SIZE + NODE_RY + 12;
-    const badgeW = 108, badgeH = 28, gap = 4;
+    const badgeW = 160, badgeH = 44, gap = 6;
     entries.forEach(({ t, state }, i) => {
       const bx = cx - badgeW / 2, by = baseCy + i * (badgeH + gap);
       const g = createEl("g", { class: "tv-map-timer-badge tv-badge-" + state, "data-timer-id": t.id });
