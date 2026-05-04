@@ -289,26 +289,32 @@ function buildMap() {
   const regionNames = [...new Set(mapData.systems.map((s) => s.regionName))];
   document.getElementById("tv-region-label").textContent = regionNames.join(" · ");
 
+  // Build lookup maps (ghost systems use string name as id)
+  const sysById   = new Map(mapData.systems.map(s => [s.id,   s]));
+  const sysByName = new Map(mapData.systems.map(s => [s.name, s]));
+
   // ── Edges ───────────────────────────────────────────────────────────────────
   const edgeG = createEl("g", { id: "tv-edges" });
   for (const e of mapData.edges) {
-    const sA = mapData.systems.find((s) => s.id === e.a);
-    const sB = mapData.systems.find((s) => s.id === e.b);
+    const sA = sysById.get(e.a) ?? sysByName.get(String(e.a));
+    const sB = sysById.get(e.b) ?? sysByName.get(String(e.b));
     if (!sA || !sB) continue;
 
     let edgeClass = "tv-edge";
-    if (sA.regionId !== sB.regionId) {
+    if (e.isGhost || sA.isGhost || sB.isGhost) {
+      edgeClass = "tv-edge tv-edge-inter-region";
+    } else if (sA.regionId !== sB.regionId) {
       edgeClass = "tv-edge tv-edge-inter-region";
     } else if (sA.constellationId !== sB.constellationId) {
       edgeClass = "tv-edge tv-edge-inter-const";
     }
 
+    const edgeId = `tv-edge-${sA.name}-${sB.name}`;
     edgeG.appendChild(createEl("line", {
-      id: `tv-edge-${e.a}-${e.b}`,
-      class: edgeClass,
+      id: edgeId, class: edgeClass,
       x1: sA.nx * MAP_SIZE, y1: sA.ny * MAP_SIZE,
       x2: sB.nx * MAP_SIZE, y2: sB.ny * MAP_SIZE,
-      "data-sys-a": sA.id, "data-sys-b": sB.id,
+      "data-sys-a": sA.name, "data-sys-b": sB.name,
     }));
   }
   svg.appendChild(edgeG);
@@ -363,38 +369,48 @@ function darken(hex, amt) {
 
 function buildSystemNode(sys) {
   const cx = sys.nx * MAP_SIZE, cy = sys.ny * MAP_SIZE;
-  const fillColor   = mixColor(sys.regionColor, "#0d1117", 0.45); // region-tinted dark fill
-  const strokeColor = lighten(sys.regionColor, 0.5);               // bright stroke
+  const isGhost     = !!sys.isGhost;
+  const fillColor   = isGhost ? "#111" : mixColor(sys.regionColor, "#0d1117", 0.45);
+  const strokeColor = isGhost ? "#555" : lighten(sys.regionColor, 0.5);
+
+  const nodeId = isGhost ? "tv-sys-ghost-" + sys.name : "tv-sys-" + sys.id;
+  const rx = isGhost ? NODE_RX * 0.6 : NODE_RX;
+  const ry = isGhost ? NODE_RY * 0.6 : NODE_RY;
 
   const g = createEl("g", {
-    id: "tv-sys-" + sys.id, "data-system": sys.name,
-    "data-sys-id": sys.id, class: "tv-system-group",
+    id: nodeId, "data-system": sys.name,
+    "data-sys-id": isGhost ? sys.name : sys.id,
+    class: "tv-system-group" + (isGhost ? " tv-ghost-node" : ""),
+    style: isGhost ? "pointer-events: none; opacity: 0.55;" : "",
   });
 
-  // Outer glow halo
-  g.appendChild(createEl("ellipse", {
-    class: "tv-node-glow", cx, cy,
-    rx: NODE_RX + 14, ry: NODE_RY + 14,
-    fill: sys.regionColor, "fill-opacity": "0.22",
-    style: `filter: blur(10px)`,
-  }));
+  if (!isGhost) {
+    // Outer glow halo (real nodes only)
+    g.appendChild(createEl("ellipse", {
+      class: "tv-node-glow", cx, cy,
+      rx: NODE_RX + 14, ry: NODE_RY + 14,
+      fill: sys.regionColor, "fill-opacity": "0.22",
+      style: `filter: blur(10px)`,
+    }));
+  }
 
   // Main node body
   g.appendChild(createEl("ellipse", {
-    class: "tv-system-node", cx, cy, rx: NODE_RX, ry: NODE_RY,
+    class: "tv-system-node", cx, cy, rx, ry,
     fill: fillColor,
-    stroke: strokeColor, "stroke-width": "4",
+    stroke: strokeColor, "stroke-width": isGhost ? "2" : "4",
     "data-base-stroke": strokeColor,
-    "data-region-color": sys.regionColor,
-    style: `filter: drop-shadow(0 0 8px ${sys.regionColor})`,
+    "data-region-color": sys.regionColor || "#555",
+    style: isGhost ? "" : `filter: drop-shadow(0 0 8px ${sys.regionColor})`,
   }));
 
   // System name label
   const lbl = createEl("text", { class: "tv-system-label", x: cx, y: cy });
   lbl.textContent = sys.name;
+  if (isGhost) lbl.setAttribute("style", "fill:#666; font-style:italic;");
   g.appendChild(lbl);
 
-  g.appendChild(createEl("g", { id: "tv-badges-" + sys.id, class: "tv-badge-group" }));
+  if (!isGhost) g.appendChild(createEl("g", { id: "tv-badges-" + sys.id, class: "tv-badge-group" }));
   return g;
 }
 
@@ -463,8 +479,8 @@ function moveSystemNode(sys) {
   const lbl = g.querySelector(".tv-system-label");
   if (lbl) { lbl.setAttribute("x", cx); lbl.setAttribute("y", cy); }
 
-  document.querySelectorAll(`line[data-sys-a="${sys.id}"]`).forEach((l) => { l.setAttribute("x1", cx); l.setAttribute("y1", cy); });
-  document.querySelectorAll(`line[data-sys-b="${sys.id}"]`).forEach((l) => { l.setAttribute("x2", cx); l.setAttribute("y2", cy); });
+  document.querySelectorAll(`line[data-sys-a="${sys.name}"]`).forEach((l) => { l.setAttribute("x1", cx); l.setAttribute("y1", cy); });
+  document.querySelectorAll(`line[data-sys-b="${sys.name}"]`).forEach((l) => { l.setAttribute("x2", cx); l.setAttribute("y2", cy); });
 
   const badgeG = document.getElementById("tv-badges-" + sys.id);
   if (badgeG) {
@@ -711,8 +727,8 @@ function applyRegionVisibility() {
     if (g) g.style.display = hiddenRegions.has(sys.regionName) ? "none" : "";
   }
   document.querySelectorAll(".tv-edge[data-sys-a]").forEach((line) => {
-    const sA = mapData.systems.find((s) => s.id === parseInt(line.dataset.sysA, 10));
-    const sB = mapData.systems.find((s) => s.id === parseInt(line.dataset.sysB, 10));
+    const sA = mapData.systems.find((s) => s.name === line.dataset.sysA);
+    const sB = mapData.systems.find((s) => s.name === line.dataset.sysB);
     line.style.display = (sA && hiddenRegions.has(sA.regionName)) && (sB && hiddenRegions.has(sB.regionName)) ? "none" : "";
   });
 }
