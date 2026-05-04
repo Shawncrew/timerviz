@@ -430,23 +430,19 @@ function renderMapTimers() {
     if (nodeEl) { nodeEl.setAttribute("stroke", stateStroke(dominant)); nodeEl.className.baseVal = "tv-system-node tv-has-timer tv-node-" + dominant; }
     if (labelEl) labelEl.className.baseVal = "tv-system-label tv-has-timer";
 
-    // Show a single aggregated badge: soonest timer + count if multiple
-    const cx = sys.nx * MAP_SIZE, by = sys.ny * MAP_SIZE + NODE_RY + 14;
-    const badgeW = 180, badgeH = 46;
-    const bx = cx - badgeW / 2;
-    const { t: soonest, state: soonestState } = entries[0];
-    const count = entries.length;
+    const cx = sys.nx * MAP_SIZE, baseCy = sys.ny * MAP_SIZE + NODE_RY + 14;
+    const badgeW = 180, badgeH = 46, gap = 8;
 
-    const g = createEl("g", { class: "tv-map-timer-badge tv-badge-" + dominant, "data-timer-id": soonest.id });
-    g.appendChild(createEl("rect", { class: "tv-map-badge-rect", x: bx, y: by, width: badgeW, height: badgeH, rx: 8, ry: 8 }));
-    const label = count > 1
-      ? `${shortCountdown(soonest, now)} +${count - 1}`
-      : shortCountdown(soonest, now);
-    const txt = createEl("text", { class: "tv-map-badge-text", x: cx, y: by + badgeH / 2 });
-    txt.textContent = label;
-    g.appendChild(txt);
-    if (soonestState === "elapsed" && CFG.canConfirm) { g.style.cursor = "pointer"; g.addEventListener("click", () => confirmRepair(soonest.id)); }
-    badgeG.appendChild(g);
+    entries.forEach(({ t, state }, i) => {
+      const bx = cx - badgeW / 2, by = baseCy + i * (badgeH + gap);
+      const g = createEl("g", { class: "tv-map-timer-badge tv-badge-" + state, "data-timer-id": t.id });
+      g.appendChild(createEl("rect", { class: "tv-map-badge-rect", x: bx, y: by, width: badgeW, height: badgeH, rx: 8, ry: 8 }));
+      const txt = createEl("text", { class: "tv-map-badge-text", x: cx, y: by + badgeH / 2 });
+      txt.textContent = shortCountdown(t, now);
+      g.appendChild(txt);
+      if (state === "elapsed" && CFG.canConfirm) { g.style.cursor = "pointer"; g.addEventListener("click", () => confirmRepair(t.id)); }
+      badgeG.appendChild(g);
+    });
   }
 }
 
@@ -477,8 +473,8 @@ function moveSystemNode(sys) {
       const rect = badge.querySelector(".tv-map-badge-rect");
       const txt  = badge.querySelector(".tv-map-badge-text");
       const bx = cx - badgeW / 2, by = baseCy + i * (badgeH + gap);
-      if (rect) { rect.setAttribute("x", bx); rect.setAttribute("y", by); }
-      if (txt)  { txt.setAttribute("x", cx); txt.setAttribute("y", by + badgeH / 2); }
+      if (rect) { rect.setAttribute("x", bx);       rect.setAttribute("y", by); }
+      if (txt)  { txt.setAttribute("x", cx);         txt.setAttribute("y", by + badgeH / 2); }
     });
   }
 }
