@@ -190,26 +190,27 @@ const DOTLAN_TRIB = {
   },
 };
 
-// ── Fade unplaced: extended-pixel coords (relative to PB origin) ──────────────
-// VRH-H7 (Fade border anchor) is at PB extended (55, 160).
-// Unplaced Fade extend leftward; each step ≈ 55 px in extended space.
+// ── Fade unplaced: extended-pixel coords (offsets FROM VRH-H7 at PB ext 55,160) ──
+// All Fade unplaced must be to the LEFT of PB (ex < 0 for most, < 55 for all).
+// PB leftmost is E-Z2ZX at extended (0, 300); Fade must clear that.
+// Each step ≈ 55 px in extended space (≈ 2 node-widths at target scale).
 const FADE_EXT = {
-  // Constellation 20000537 (near VRH-H7 / O-CNPR)
-  "K4YZ-Y":  { x:   0, y: 105 }, "L-SCBU":  { x:  55, y: 105 },
-  "O1Y-ED":  { x:  28, y: 130 }, "X36Y-G":  { x:   0, y: 160 },
-  "L-C3O7":  { x:   0, y: 135 },
-  // Constellation 20000536 (near E-9ORY / C8-CHY)
-  "P-33KR":  { x: 280, y:  55 }, "DO6H-Q":  { x: 335, y:  80 },
-  "HHK-VL":  { x: 335, y: 110 }, "CR-IFM":  { x: 280, y: 110 },
-  // Constellation 20000539 (far left)
-  "I-UUI5":  { x: -385, y: 105 }, "MPPA-A":  { x: -330, y: 105 },
-  "GME-PQ":  { x: -275, y: 105 }, "C4C-Z4":  { x: -220, y: 105 },
-  "X5-UME":  { x: -220, y: 160 }, "8QMO-E":  { x: -385, y: 160 },
-  // Constellation 20000538 (below VRH-H7)
-  "C-OK0R":  { x:   0, y: 215 }, "YKSC-A":  { x:  55, y: 215 },
-  "0-ARFO":  { x: -55, y: 270 }, "8W-OSE":  { x:   0, y: 270 },
-  "FIO1-8":  { x:  55, y: 270 }, "WQY-IQ":  { x:   0, y: 325 },
-  "E9KD-N":  { x:  55, y: 325 },
+  // Constellation 20000537 (directly left of VRH-H7 / O-CNPR)
+  "K4YZ-Y":  { x: -110, y: -55 }, "L-SCBU":  { x:  -55, y: -55 },
+  "O1Y-ED":  { x:  -82, y:  -5 }, "X36Y-G":  { x: -110, y:   0 },
+  "L-C3O7":  { x: -165, y: -30 },
+  // Constellation 20000536 (left of E-9ORY/C8-CHY — those are at ext x=345)
+  "P-33KR":  { x:  175, y: -110 }, "DO6H-Q":  { x:  225, y:  -80 },
+  "HHK-VL":  { x:  225, y:  -45 }, "CR-IFM":  { x:  175, y:  -45 },
+  // Constellation 20000539 (far left column)
+  "I-UUI5":  { x: -440, y: -55 }, "MPPA-A":  { x: -385, y: -55 },
+  "GME-PQ":  { x: -330, y: -55 }, "C4C-Z4":  { x: -275, y: -55 },
+  "X5-UME":  { x: -275, y:   0 }, "8QMO-E":  { x: -440, y:   0 },
+  // Constellation 20000538 (below and left of VRH-H7)
+  "C-OK0R":  { x: -110, y:  55 }, "YKSC-A":  { x:  -55, y:  55 },
+  "0-ARFO":  { x: -165, y: 110 }, "8W-OSE":  { x: -110, y: 110 },
+  "FIO1-8":  { x:  -55, y: 110 }, "WQY-IQ":  { x: -110, y: 165 },
+  "E9KD-N":  { x:  -55, y: 165 },
 };
 
 // ── Cache ─────────────────────────────────────────────────────────────────────
@@ -315,7 +316,7 @@ function buildLayout(systems, constellations, edges) {
   const rawSpanY = Math.max(...allEy2) - Math.min(...allEy2);
   const maxSpan  = Math.max(rawSpanX, rawSpanY);
   const scaleBySpacing = MIN_CC_SVG / minAdj;
-  const scaleByCanvas  = (MAP_SIZE * 0.70) / maxSpan;
+  const scaleByCanvas  = (MAP_SIZE * 0.35) / maxSpan;
   const scale = Math.min(scaleBySpacing, scaleByCanvas);
   console.log(`  Scale factor: ${scale.toFixed(3)}  (spacing-driven: ${scaleBySpacing.toFixed(2)}, canvas-cap: ${scaleByCanvas.toFixed(2)})`);
 
@@ -331,7 +332,31 @@ function buildLayout(systems, constellations, edges) {
     sys.ny = Math.max(0.001, Math.min(0.999, sys.ny));
   }
 
-  // Step 5 — recompute constellation centres
+  // Step 5 — separation pass: enforce minimum c-to-c = MIN_CC_SVG
+  // Only pushes overlapping nodes apart; doesn't pull them together.
+  const MIN_SEP_N = MIN_CC_SVG / MAP_SIZE; // in normalised space
+  const sysList = [...systems.values()];
+  for (let iter = 0; iter < 200; iter++) {
+    for (let i = 0; i < sysList.length; i++) {
+      for (let j = i + 1; j < sysList.length; j++) {
+        const si = sysList[i], sj = sysList[j];
+        const dx = sj.nx - si.nx, dy = sj.ny - si.ny;
+        const d  = Math.hypot(dx, dy) || 1e-9;
+        if (d < MIN_SEP_N) {
+          const push = (MIN_SEP_N - d) * 0.5;
+          const ux = dx / d, uy = dy / d;
+          si.nx -= ux * push * 0.5; si.ny -= uy * push * 0.5;
+          sj.nx += ux * push * 0.5; sj.ny += uy * push * 0.5;
+          si.nx = Math.max(0.001, Math.min(0.999, si.nx));
+          si.ny = Math.max(0.001, Math.min(0.999, si.ny));
+          sj.nx = Math.max(0.001, Math.min(0.999, sj.nx));
+          sj.ny = Math.max(0.001, Math.min(0.999, sj.ny));
+        }
+      }
+    }
+  }
+
+  // Step 6 — recompute constellation centres
   for (const [, c] of constellations) {
     const sids = c.systems.filter(id => systems.has(id));
     if (!sids.length) continue;
