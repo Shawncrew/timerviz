@@ -289,29 +289,24 @@ function buildMap() {
   const regionNames = [...new Set(mapData.systems.map((s) => s.regionName))];
   document.getElementById("tv-region-label").textContent = regionNames.join(" · ");
 
-  // Build lookup maps (ghost systems use string name as id)
-  const sysById   = new Map(mapData.systems.map(s => [s.id,   s]));
-  const sysByName = new Map(mapData.systems.map(s => [s.name, s]));
+  const sysById = new Map(mapData.systems.map(s => [s.id, s]));
 
   // ── Edges ───────────────────────────────────────────────────────────────────
   const edgeG = createEl("g", { id: "tv-edges" });
   for (const e of mapData.edges) {
-    const sA = sysById.get(e.a) ?? sysByName.get(String(e.a));
-    const sB = sysById.get(e.b) ?? sysByName.get(String(e.b));
+    const sA = sysById.get(e.a);
+    const sB = sysById.get(e.b);
     if (!sA || !sB) continue;
 
     let edgeClass = "tv-edge";
-    if (e.isGhost || sA.isGhost || sB.isGhost) {
-      edgeClass = "tv-edge tv-edge-inter-region";
-    } else if (sA.regionId !== sB.regionId) {
+    if (sA.regionId !== sB.regionId) {
       edgeClass = "tv-edge tv-edge-inter-region";
     } else if (sA.constellationId !== sB.constellationId) {
       edgeClass = "tv-edge tv-edge-inter-const";
     }
 
-    const edgeId = `tv-edge-${sA.name}-${sB.name}`;
     edgeG.appendChild(createEl("line", {
-      id: edgeId, class: edgeClass,
+      id: `tv-edge-${sA.name}-${sB.name}`, class: edgeClass,
       x1: sA.nx * MAP_SIZE, y1: sA.ny * MAP_SIZE,
       x2: sB.nx * MAP_SIZE, y2: sB.ny * MAP_SIZE,
       "data-sys-a": sA.name, "data-sys-b": sB.name,
@@ -369,48 +364,33 @@ function darken(hex, amt) {
 
 function buildSystemNode(sys) {
   const cx = sys.nx * MAP_SIZE, cy = sys.ny * MAP_SIZE;
-  const isGhost     = !!sys.isGhost;
-  const fillColor   = isGhost ? "#111" : mixColor(sys.regionColor, "#0d1117", 0.45);
-  const strokeColor = isGhost ? "#555" : lighten(sys.regionColor, 0.5);
-
-  const nodeId = isGhost ? "tv-sys-ghost-" + sys.name : "tv-sys-" + sys.id;
-  const rx = isGhost ? NODE_RX * 0.6 : NODE_RX;
-  const ry = isGhost ? NODE_RY * 0.6 : NODE_RY;
+  const fillColor   = mixColor(sys.regionColor, "#0d1117", 0.45);
+  const strokeColor = lighten(sys.regionColor, 0.5);
 
   const g = createEl("g", {
-    id: nodeId, "data-system": sys.name,
-    "data-sys-id": isGhost ? sys.name : sys.id,
-    class: "tv-system-group" + (isGhost ? " tv-ghost-node" : ""),
-    style: isGhost ? "pointer-events: none; opacity: 0.55;" : "",
+    id: "tv-sys-" + sys.id, "data-system": sys.name,
+    "data-sys-id": sys.id, class: "tv-system-group",
   });
 
-  if (!isGhost) {
-    // Outer glow halo (real nodes only)
-    g.appendChild(createEl("ellipse", {
-      class: "tv-node-glow", cx, cy,
-      rx: NODE_RX + 14, ry: NODE_RY + 14,
-      fill: sys.regionColor, "fill-opacity": "0.22",
-      style: `filter: blur(10px)`,
-    }));
-  }
-
-  // Main node body
   g.appendChild(createEl("ellipse", {
-    class: "tv-system-node", cx, cy, rx, ry,
-    fill: fillColor,
-    stroke: strokeColor, "stroke-width": isGhost ? "2" : "4",
-    "data-base-stroke": strokeColor,
-    "data-region-color": sys.regionColor || "#555",
-    style: isGhost ? "" : `filter: drop-shadow(0 0 8px ${sys.regionColor})`,
+    class: "tv-node-glow", cx, cy,
+    rx: NODE_RX + 14, ry: NODE_RY + 14,
+    fill: sys.regionColor, "fill-opacity": "0.22",
+    style: `filter: blur(10px)`,
   }));
 
-  // System name label
+  g.appendChild(createEl("ellipse", {
+    class: "tv-system-node", cx, cy, rx: NODE_RX, ry: NODE_RY,
+    fill: fillColor, stroke: strokeColor, "stroke-width": "4",
+    "data-base-stroke": strokeColor, "data-region-color": sys.regionColor,
+    style: `filter: drop-shadow(0 0 8px ${sys.regionColor})`,
+  }));
+
   const lbl = createEl("text", { class: "tv-system-label", x: cx, y: cy });
   lbl.textContent = sys.name;
-  if (isGhost) lbl.setAttribute("style", "fill:#666; font-style:italic;");
   g.appendChild(lbl);
 
-  if (!isGhost) g.appendChild(createEl("g", { id: "tv-badges-" + sys.id, class: "tv-badge-group" }));
+  g.appendChild(createEl("g", { id: "tv-badges-" + sys.id, class: "tv-badge-group" }));
   return g;
 }
 
