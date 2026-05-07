@@ -1,14 +1,20 @@
 /**
- * Build map-data.json for Pure Blind, Fade, Deklein, and Tribute.
+ * Build map-data.json for Pure Blind, Fade, Deklein, Tribute.
  *
- * Layout sectors (normalised 0–1):
- *   Deklein : nx=[0.02, 0.98]  ny=[0.02, 0.44]   (upper strip)
- *   Fade    : nx=[0.02, 0.53]  ny=[0.46, 0.98]   (lower-left, shares with PB)
- *   PB      : nx=[0.02, 0.53]  ny=[0.46, 0.98]   (lower-left, via DOTLAN_MAIN)
- *   Tribute : nx=[0.55, 0.98]  ny=[0.46, 0.98]   (lower-right)
+ * Positioning strategy:
+ *   - All systems placed in a unified "extended pixel" coordinate space
+ *     derived from Dotlan SVG coordinates, anchored via shared border systems.
+ *   - Pure Blind / Fade border: DOTLAN_MAIN at offset (0, 0)
+ *   - Deklein: DOTLAN_DEK aligned via U-INPD (PB top-left) as anchor
+ *   - Tribute: DOTLAN_TRIB aligned via KQK1-2 (PB top-centre) as anchor
+ *   - Fade unplaced: hardcoded extended-pixel positions extending left of PB
+ *
+ *   After placing, the entire layout is scaled so the minimum pairwise
+ *   distance between any two nodes equals exactly the required spacing
+ *   (2 node-widths gap + 2 node radii = 6 × NODE_RX SVG units), then
+ *   centered at (0.5, 0.5) on the 20 000-unit canvas.
  *
  * Run: node scripts/build_map_data.mjs
- * ESI cached in scripts/esi-cache.json.
  */
 
 import { readFileSync, writeFileSync, existsSync } from "fs";
@@ -27,19 +33,26 @@ const REGIONS = [
   { id: 10000010, name: "Tribute",    color: "#e74c3c" },
 ];
 
-// ── Canvas sectors (nx/ny ranges for each region group) ─────────────────────
-// Sectors at 30% of original size on 20000-unit canvas.
-// PB_FADE left extended to 0.305 to give Fade room to the left of PB.
-const SECTOR = {
-  "PB_FADE": { l: 0.305, r: 0.509, t: 0.488, b: 0.644 },
-  "Deklein":  { l: 0.344, r: 0.794, t: 0.356, b: 0.482 },
-  "Tribute":  { l: 0.515, r: 0.794, t: 0.488, b: 0.644 },
-};
+// ── Node dimensions (SVG units on 20 000-unit canvas) ─────────────────────────
+const MAP_SIZE = 20000;
+const NODE_RX  = 52;
+const NODE_RY  = 28;
 
-// ── Dotlan Pure Blind SVG coords (1024×768) ──────────────────────────────────
-// Includes 5 Fade border systems visible on PB map.
+// Minimum center-to-centre distance:
+//   gap = 2 × node_width = 2 × (2×NODE_RX) = 208 SVG units
+//   c-to-c = NODE_RX + 208 + NODE_RX = 312 SVG units
+const MIN_CC_SVG = 6 * NODE_RX; // 312
+
+// ── Extended-pixel offsets (anchor alignment) ─────────────────────────────────
+//   PB origin     : (0, 0)
+//   U-INPD in PB  : (710, 10)   U-INPD in DEK : (951, 540)
+//   KQK1-2 in PB  : (480, 85)   KQK1-2 in TRIB: (1004, 745)
+const OFF_PB   = { dx:   0, dy:   0 };
+const OFF_DEK  = { dx: 710 - 951, dy:  10 - 540 }; // (-241, -530)
+const OFF_TRIB = { dx: 480 - 1004, dy: 85 - 745 }; // (-524, -660)
+
+// ── Dotlan Pure Blind SVG coords (1024 × 768) ──────────────────────────────────
 const DOTLAN_MAIN = {
-  width: 1024, height: 768,
   systems: {
     "E-Z2ZX":  { x:   0, y: 300 }, "7D-0SQ":  { x:   0, y: 625 },
     "RORZ-H":  { x:  30, y: 340 }, "KU5R-W":  { x:  30, y: 505 },
@@ -91,9 +104,8 @@ const DOTLAN_MAIN = {
   },
 };
 
-// ── Dotlan Deklein SVG coords (1024×768, internal systems only) ───────────────
+// ── Dotlan Deklein SVG coords (internal systems only) ─────────────────────────
 const DOTLAN_DEK = {
-  width: 1024, height: 768,
   systems: {
     "RG9-7U": { x: 61, y: 110 }, "UEJX-G": { x: 61, y: 180 },
     "3JN9-Q": { x: 81, y: 610 }, "O-2RNZ": { x: 106, y: 565 },
@@ -132,9 +144,8 @@ const DOTLAN_DEK = {
   },
 };
 
-// ── Dotlan Tribute SVG coords (1024×768, internal systems only) ───────────────
+// ── Dotlan Tribute SVG coords (internal systems only) ─────────────────────────
 const DOTLAN_TRIB = {
-  width: 1024, height: 768,
   systems: {
     "Y-PZHM": { x: 31, y: 55 }, "OY-UZ1": { x: 36, y: 205 },
     "9SL-K9": { x: 41, y: 90 }, "C8VC-S": { x: 41, y: 610 },
@@ -179,8 +190,27 @@ const DOTLAN_TRIB = {
   },
 };
 
-const MIN_SEP   = 0.0025;
-const SEP_ITERS = 300;
+// ── Fade unplaced: extended-pixel coords (relative to PB origin) ──────────────
+// VRH-H7 (Fade border anchor) is at PB extended (55, 160).
+// Unplaced Fade extend leftward; each step ≈ 55 px in extended space.
+const FADE_EXT = {
+  // Constellation 20000537 (near VRH-H7 / O-CNPR)
+  "K4YZ-Y":  { x:   0, y: 105 }, "L-SCBU":  { x:  55, y: 105 },
+  "O1Y-ED":  { x:  28, y: 130 }, "X36Y-G":  { x:   0, y: 160 },
+  "L-C3O7":  { x:   0, y: 135 },
+  // Constellation 20000536 (near E-9ORY / C8-CHY)
+  "P-33KR":  { x: 280, y:  55 }, "DO6H-Q":  { x: 335, y:  80 },
+  "HHK-VL":  { x: 335, y: 110 }, "CR-IFM":  { x: 280, y: 110 },
+  // Constellation 20000539 (far left)
+  "I-UUI5":  { x: -385, y: 105 }, "MPPA-A":  { x: -330, y: 105 },
+  "GME-PQ":  { x: -275, y: 105 }, "C4C-Z4":  { x: -220, y: 105 },
+  "X5-UME":  { x: -220, y: 160 }, "8QMO-E":  { x: -385, y: 160 },
+  // Constellation 20000538 (below VRH-H7)
+  "C-OK0R":  { x:   0, y: 215 }, "YKSC-A":  { x:  55, y: 215 },
+  "0-ARFO":  { x: -55, y: 270 }, "8W-OSE":  { x:   0, y: 270 },
+  "FIO1-8":  { x:  55, y: 270 }, "WQY-IQ":  { x:   0, y: 325 },
+  "E9KD-N":  { x:  55, y: 325 },
+};
 
 // ── Cache ─────────────────────────────────────────────────────────────────────
 let cache = existsSync(CACHE_FILE) ? JSON.parse(readFileSync(CACHE_FILE, "utf8")) : {};
@@ -192,7 +222,7 @@ async function get(url) {
   const data = await r.json();
   cache[url] = data;
   writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2));
-  await new Promise((res) => setTimeout(res, 55));
+  await new Promise(res => setTimeout(res, 55));
   return data;
 }
 
@@ -211,7 +241,6 @@ async function fetchAll() {
           id: sid, name: s.name, x: s.position.x, y: s.position.y, z: s.position.z,
           regionId: reg.id, regionName: reg.name, regionColor: reg.color,
           constellationId: cid, constellationName: c.name, stargates: s.stargates ?? [],
-          isGhost: false,
         });
       }
     }
@@ -228,121 +257,96 @@ async function fetchAll() {
   return { systems, constellations, edges };
 }
 
-function clamp(v, lo = 0.01, hi = 0.99) { return Math.max(lo, Math.min(hi, v)); }
-
 // ── Layout ────────────────────────────────────────────────────────────────────
 function buildLayout(systems, constellations, edges) {
-  const placed = new Set();
 
-  // ── Place PB + Fade border systems (DOTLAN_MAIN → PB_FADE sector) ─────────
-  const pbf = SECTOR.PB_FADE;
+  // Step 1 — assign extended-pixel coords to every system
+  const extPos = new Map(); // sysId → {ex, ey}
+
   for (const sys of systems.values()) {
-    const dot = DOTLAN_MAIN.systems[sys.name];
-    if (dot) {
-      sys.nx = pbf.l + (dot.x / DOTLAN_MAIN.width)  * (pbf.r - pbf.l);
-      sys.ny = pbf.t + (dot.y / DOTLAN_MAIN.height) * (pbf.b - pbf.t);
-      placed.add(sys.id);
+    const name = sys.name;
+    // PB + Fade border
+    if (DOTLAN_MAIN.systems[name]) {
+      const d = DOTLAN_MAIN.systems[name];
+      extPos.set(sys.id, { ex: d.x + OFF_PB.dx, ey: d.y + OFF_PB.dy });
+      continue;
     }
+    // Deklein internal
+    if (sys.regionId === 10000035 && DOTLAN_DEK.systems[name]) {
+      const d = DOTLAN_DEK.systems[name];
+      extPos.set(sys.id, { ex: d.x + OFF_DEK.dx, ey: d.y + OFF_DEK.dy });
+      continue;
+    }
+    // Tribute internal
+    if (sys.regionId === 10000010 && DOTLAN_TRIB.systems[name]) {
+      const d = DOTLAN_TRIB.systems[name];
+      extPos.set(sys.id, { ex: d.x + OFF_TRIB.dx, ey: d.y + OFF_TRIB.dy });
+      continue;
+    }
+    // Fade unplaced
+    if (sys.regionId === 10000046 && FADE_EXT[name]) {
+      // FADE_EXT coords are offsets relative to VRH-H7's PB extended position (55, 160)
+      extPos.set(sys.id, { ex: 55 + FADE_EXT[name].x, ey: 160 + FADE_EXT[name].y });
+      continue;
+    }
+    // Fallback: place at PB centre
+    console.warn(`  No extended position for: ${name} (${sys.regionName})`);
+    extPos.set(sys.id, { ex: 480, ey: 400 });
   }
-  console.log(`  PB+Fade border: ${placed.size} systems placed`);
 
-  // ── Hardcoded Fade positions calibrated for current PB_FADE sector ──────────
-  // Border Fade in this sector: VRH-H7≈(0.316,0.520) DW-T2I≈(0.347,0.496)
-  // Unplaced Fade extend to the left (lower nx) of those anchors.
-  const FADE_POS = {
-    "K4YZ-Y":  { nx: 0.315, ny: 0.497 }, "L-SCBU":  { nx: 0.322, ny: 0.497 },
-    "O1Y-ED":  { nx: 0.319, ny: 0.504 }, "X36Y-G":  { nx: 0.312, ny: 0.521 },
-    "L-C3O7":  { nx: 0.310, ny: 0.511 },
-    "P-33KR":  { nx: 0.360, ny: 0.496 }, "DO6H-Q":  { nx: 0.366, ny: 0.500 },
-    "HHK-VL":  { nx: 0.368, ny: 0.507 }, "CR-IFM":  { nx: 0.362, ny: 0.510 },
-    "I-UUI5":  { nx: 0.307, ny: 0.502 }, "MPPA-A":  { nx: 0.307, ny: 0.509 },
-    "GME-PQ":  { nx: 0.307, ny: 0.516 }, "C4C-Z4":  { nx: 0.313, ny: 0.516 },
-    "X5-UME":  { nx: 0.313, ny: 0.523 }, "8QMO-E":  { nx: 0.307, ny: 0.530 },
-    "C-OK0R":  { nx: 0.312, ny: 0.530 }, "YKSC-A":  { nx: 0.318, ny: 0.531 },
-    "0-ARFO":  { nx: 0.307, ny: 0.537 }, "8W-OSE":  { nx: 0.313, ny: 0.538 },
-    "FIO1-8":  { nx: 0.319, ny: 0.539 }, "WQY-IQ":  { nx: 0.313, ny: 0.545 },
-    "E9KD-N":  { nx: 0.319, ny: 0.546 },
-  };
-  let fadePlacedCount = 0;
+  // Step 2 — find minimum distance between ADJACENT (gate-connected) systems only.
+  // Using only adjacent distances keeps the Dotlan topology while avoiding accidental
+  // overlaps between non-adjacent systems from different regions inflating the scale.
+  let minAdj = Infinity;
+  for (const e of edges) {
+    const [a, b] = e.split("-").map(Number);
+    const pa = extPos.get(a), pb2 = extPos.get(b);
+    if (!pa || !pb2) continue;
+    const d = Math.hypot(pb2.ex - pa.ex, pb2.ey - pa.ey);
+    if (d > 0) minAdj = Math.min(minAdj, d);
+  }
+  console.log(`  Min adjacent distance in extended space: ${minAdj.toFixed(1)} px`);
+
+  // Step 3 — compute scale: map minAdj → MIN_CC_SVG,
+  // but cap so the whole layout fits within 70% of MAP_SIZE.
+  const allEx2 = [...extPos.values()].map(p => p.ex);
+  const allEy2 = [...extPos.values()].map(p => p.ey);
+  const rawSpanX = Math.max(...allEx2) - Math.min(...allEx2);
+  const rawSpanY = Math.max(...allEy2) - Math.min(...allEy2);
+  const maxSpan  = Math.max(rawSpanX, rawSpanY);
+  const scaleBySpacing = MIN_CC_SVG / minAdj;
+  const scaleByCanvas  = (MAP_SIZE * 0.70) / maxSpan;
+  const scale = Math.min(scaleBySpacing, scaleByCanvas);
+  console.log(`  Scale factor: ${scale.toFixed(3)}  (spacing-driven: ${scaleBySpacing.toFixed(2)}, canvas-cap: ${scaleByCanvas.toFixed(2)})`);
+
+  // Step 4 — apply scale and centre at (0.5, 0.5)
+  const cxExt = (Math.min(...allEx2) + Math.max(...allEx2)) / 2;
+  const cyExt = (Math.min(...allEy2) + Math.max(...allEy2)) / 2;
+
   for (const sys of systems.values()) {
-    if (sys.regionId !== 10000046 || placed.has(sys.id)) continue;
-    const fp = FADE_POS[sys.name];
-    if (fp) { sys.nx = fp.nx; sys.ny = fp.ny; }
-    else     { sys.nx = pbf.l + 0.005; sys.ny = (pbf.t + pbf.b) / 2; }
-    placed.add(sys.id); fadePlacedCount++;
-  }
-  console.log(`  Fade unplaced: ${fadePlacedCount} systems placed`);
-
-  // ── Place Deklein systems (DOTLAN_DEK → Deklein sector) ───────────────────
-  const dekS = SECTOR.Deklein;
-  let dekCount = 0;
-  for (const sys of systems.values()) {
-    if (sys.regionId !== 10000035) continue;
-    const dot = DOTLAN_DEK.systems[sys.name];
-    if (dot) {
-      sys.nx = dekS.l + (dot.x / DOTLAN_DEK.width)  * (dekS.r - dekS.l);
-      sys.ny = dekS.t + (dot.y / DOTLAN_DEK.height) * (dekS.b - dekS.t);
-      placed.add(sys.id); dekCount++;
-    } else {
-      // Deklein system not in our Dotlan data — place at center of sector
-      sys.nx = (dekS.l + dekS.r) / 2; sys.ny = (dekS.t + dekS.b) / 2;
-      placed.add(sys.id); dekCount++;
-    }
-  }
-  console.log(`  Deklein: ${dekCount} systems placed`);
-
-  // ── Place Tribute systems (DOTLAN_TRIB → Tribute sector) ──────────────────
-  const tribS = SECTOR.Tribute;
-  let tribCount = 0;
-  for (const sys of systems.values()) {
-    if (sys.regionId !== 10000010) continue;
-    const dot = DOTLAN_TRIB.systems[sys.name];
-    if (dot) {
-      sys.nx = tribS.l + (dot.x / DOTLAN_TRIB.width)  * (tribS.r - tribS.l);
-      sys.ny = tribS.t + (dot.y / DOTLAN_TRIB.height) * (tribS.b - tribS.t);
-      placed.add(sys.id); tribCount++;
-    } else {
-      sys.nx = (tribS.l + tribS.r) / 2; sys.ny = (tribS.t + tribS.b) / 2;
-      placed.add(sys.id); tribCount++;
-    }
-  }
-  console.log(`  Tribute: ${tribCount} systems placed`);
-
-  // ── Global separation pass ─────────────────────────────────────────────────
-  const allList = [...systems.values()];
-  console.log(`  Separation pass (${SEP_ITERS} iters)…`);
-  for (let iter = 0; iter < SEP_ITERS; iter++) {
-    for (let i = 0; i < allList.length; i++) {
-      for (let j = i+1; j < allList.length; j++) {
-        const si=allList[i], sj=allList[j];
-        const dx=sj.nx-si.nx, dy=sj.ny-si.ny;
-        const d=Math.hypot(dx,dy)||1e-9;
-        if (d < MIN_SEP) {
-          const push=(MIN_SEP-d)*0.4;
-          const ux=dx/d, uy=dy/d;
-          const wi = placed.has(si.id)?0.12:0.5, wj=placed.has(sj.id)?0.12:0.5;
-          si.nx-=ux*push*wi; si.ny-=uy*push*wi;
-          sj.nx+=ux*push*wj; sj.ny+=uy*push*wj;
-          si.nx=clamp(si.nx,0.01,0.99); si.ny=clamp(si.ny,0.01,0.99);
-          sj.nx=clamp(sj.nx,0.01,0.99); sj.ny=clamp(sj.ny,0.01,0.99);
-        }
-      }
-    }
+    const p = extPos.get(sys.id);
+    sys.nx = 0.5 + (p.ex - cxExt) * scale / MAP_SIZE;
+    sys.ny = 0.5 + (p.ey - cyExt) * scale / MAP_SIZE;
+    sys.nx = Math.max(0.001, Math.min(0.999, sys.nx));
+    sys.ny = Math.max(0.001, Math.min(0.999, sys.ny));
   }
 
-  // ── Recompute constellation centres ───────────────────────────────────────
-  for (const [,c] of constellations) {
+  // Step 5 — recompute constellation centres
+  for (const [, c] of constellations) {
     const sids = c.systems.filter(id => systems.has(id));
     if (!sids.length) continue;
-    c.centerNx = sids.reduce((s,id)=>s+systems.get(id).nx,0)/sids.length;
-    c.centerNy = sids.reduce((s,id)=>s+systems.get(id).ny,0)/sids.length;
+    c.centerNx = sids.reduce((s, id) => s + systems.get(id).nx, 0) / sids.length;
+    c.centerNy = sids.reduce((s, id) => s + systems.get(id).ny, 0) / sids.length;
   }
 
+  const spanX = rawSpanX * scale;
+  const spanY = rawSpanY * scale;
+  console.log(`  Layout SVG span: ${spanX.toFixed(0)} × ${spanY.toFixed(0)} (canvas ${MAP_SIZE} × ${MAP_SIZE})`);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 async function main() {
-  console.log("=== timerviz map data builder (4 regions) ===");
+  console.log("=== timerviz map data builder ===");
   const { systems, constellations, edges } = await fetchAll();
   console.log(`\nTotal: ${systems.size} systems, ${constellations.size} constellations, ${edges.size} edges`);
 
@@ -351,18 +355,18 @@ async function main() {
   const out = {
     generated: new Date().toISOString(),
     regions: REGIONS,
-    constellations: Object.fromEntries([...constellations.entries()].map(([cid,c]) => [String(cid), {
+    constellations: Object.fromEntries([...constellations.entries()].map(([cid, c]) => [String(cid), {
       id: cid, name: c.name, regionId: c.regionId, regionName: c.regionName, color: c.color,
-      centerNx: parseFloat((c.centerNx??0.5).toFixed(6)),
-      centerNy: parseFloat((c.centerNy??0.5).toFixed(6)),
+      centerNx: parseFloat((c.centerNx ?? 0.5).toFixed(6)),
+      centerNy: parseFloat((c.centerNy ?? 0.5).toFixed(6)),
     }])),
-    systems: [...systems.values()].sort((a,b)=>a.id-b.id).map(
-      ({id,name,regionId,regionName,regionColor,constellationId,constellationName,nx,ny}) => ({
+    systems: [...systems.values()].sort((a, b) => a.id - b.id).map(
+      ({ id, name, regionId, regionName, regionColor, constellationId, constellationName, nx, ny }) => ({
         id, name, regionId, regionName, regionColor, constellationId, constellationName,
         nx: parseFloat(nx.toFixed(6)), ny: parseFloat(ny.toFixed(6)),
       })
     ),
-    edges: [...edges].map(e => { const [a,b]=e.split("-").map(Number); return {a,b}; }),
+    edges: [...edges].map(e => { const [a, b] = e.split("-").map(Number); return { a, b }; }),
   };
 
   writeFileSync(OUT_FILE, JSON.stringify(out, null, 2));

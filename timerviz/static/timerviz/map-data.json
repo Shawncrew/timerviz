@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-05T21:29:56.482Z",
+  "generated": "2026-05-07T03:42:46.832Z",
   "regions": [
     {
       "id": 10000046,
@@ -29,8 +29,8 @@
       "regionId": 10000010,
       "regionName": "Tribute",
       "color": "#e74c3c",
-      "centerNx": 0.628616,
-      "centerNy": 0.618406
+      "centerNx": 0.336602,
+      "centerNy": 0.46471
     },
     "20000125": {
       "id": 20000125,
@@ -38,8 +38,8 @@
       "regionId": 10000010,
       "regionName": "Tribute",
       "color": "#e74c3c",
-      "centerNx": 0.559018,
-      "centerNy": 0.55379
+      "centerNx": 0.213114,
+      "centerNy": 0.310927
     },
     "20000126": {
       "id": 20000126,
@@ -47,8 +47,8 @@
       "regionId": 10000010,
       "regionName": "Tribute",
       "color": "#e74c3c",
-      "centerNx": 0.628117,
-      "centerNy": 0.580253
+      "centerNx": 0.335716,
+      "centerNy": 0.373907
     },
     "20000127": {
       "id": 20000127,
@@ -56,8 +56,8 @@
       "regionId": 10000010,
       "regionName": "Tribute",
       "color": "#e74c3c",
-      "centerNx": 0.641059,
-      "centerNy": 0.543352
+      "centerNx": 0.358679,
+      "centerNy": 0.286084
     },
     "20000128": {
       "id": 20000128,
@@ -65,8 +65,8 @@
       "regionId": 10000010,
       "regionName": "Tribute",
       "color": "#e74c3c",
-      "centerNx": 0.584568,
-      "centerNy": 0.618711
+      "centerNx": 0.258448,
+      "centerNy": 0.465435
     },
     "20000129": {
       "id": 20000129,
@@ -74,8 +74,8 @@
       "regionId": 10000010,
       "regionName": "Tribute",
       "color": "#e74c3c",
-      "centerNx": 0.536096,
-      "centerNy": 0.517163
+      "centerNx": 0.172445,
+      "centerNy": 0.223757
     },
     "20000130": {
       "id": 20000130,
@@ -83,8 +83,8 @@
       "regionId": 10000010,
       "regionName": "Tribute",
       "color": "#e74c3c",
-      "centerNx": 0.546946,
-      "centerNy": 0.604162
+      "centerNx": 0.191695,
+      "centerNy": 0.43081
     },
     "20000131": {
       "id": 20000131,
@@ -92,8 +92,8 @@
       "regionId": 10000010,
       "regionName": "Tribute",
       "color": "#e74c3c",
-      "centerNx": 0.701636,
-      "centerNy": 0.529505
+      "centerNx": 0.46616,
+      "centerNy": 0.253131
     },
     "20000289": {
       "id": 20000289,
@@ -101,8 +101,8 @@
       "regionId": 10000023,
       "regionName": "Pure Blind",
       "color": "#2ecc71",
-      "centerNx": 0.417227,
-      "centerNy": 0.510682
+      "centerNx": 0.660658,
+      "centerNy": 0.527394
     },
     "20000290": {
       "id": 20000290,
@@ -110,8 +110,8 @@
       "regionId": 10000023,
       "regionName": "Pure Blind",
       "color": "#2ecc71",
-      "centerNx": 0.475706,
-      "centerNy": 0.529514
+      "centerNx": 0.802564,
+      "centerNy": 0.572212
     },
     "20000291": {
       "id": 20000291,
@@ -119,8 +119,8 @@
       "regionId": 10000023,
       "regionName": "Pure Blind",
       "color": "#2ecc71",
-      "centerNx": 0.379707,
-      "centerNy": 0.546761
+      "centerNx": 0.569613,
+      "centerNy": 0.61326
     },
     "20000292": {
       "id": 20000292,
@@ -128,8 +128,8 @@
       "regionId": 10000023,
       "regionName": "Pure Blind",
       "color": "#2ecc71",
-      "centerNx": 0.427235,
-      "centerNy": 0.596237
+      "centerNx": 0.684945,
+      "centerNy": 0.731008
     },
     "20000293": {
       "id": 20000293,
@@ -137,8 +137,8 @@
       "regionId": 10000023,
       "regionName": "Pure Blind",
       "color": "#2ecc71",
-      "centerNx": 0.477467,
-      "centerNy": 0.499462
+      "centerNx": 0.806837,
+      "centerNy": 0.500691
     },
     "20000294": {
       "id": 20000294,
@@ -146,8 +146,8 @@
       "regionId": 10000023,
       "regionName": "Pure Blind",
       "color": "#2ecc71",
-      "centerNx": 0.477822,
-      "centerNy": 0.583807
+      "centerNx": 0.8077,
+      "centerNy": 0.701427
     },
     "20000295": {
       "id": 20000295,
@@ -155,8 +155,8 @@
       "regionId": 10000023,
       "regionName": "Pure Blind",
       "color": "#2ecc71",
-      "centerNx": 0.43084,
-      "centerNy": 0.535057
+      "centerNx": 0.693692,
+      "centerNy": 0.585405
     },
     "20000296": {
       "id": 20000296,
@@ -164,8 +164,8 @@
       "regionId": 10000023,
       "regionName": "Pure Blind",
       "color": "#2ecc71",
-      "centerNx": 0.406934,
-      "centerNy": 0.541997
+      "centerNx": 0.635681,
+      "centerNy": 0.601922
     },
     "20000297": {
       "id": 20000297,
@@ -173,8 +173,8 @@
       "regionId": 10000023,
       "regionName": "Pure Blind",
       "color": "#2ecc71",
-      "centerNx": 0.35139,
-      "centerNy": 0.557933
+      "centerNx": 0.500898,
+      "centerNy": 0.639848
     },
     "20000298": {
       "id": 20000298,
@@ -182,8 +182,8 @@
       "regionId": 10000023,
       "regionName": "Pure Blind",
       "color": "#2ecc71",
-      "centerNx": 0.382197,
-      "centerNy": 0.600227
+      "centerNx": 0.575656,
+      "centerNy": 0.740504
     },
     "20000299": {
       "id": 20000299,
@@ -191,8 +191,8 @@
       "regionId": 10000023,
       "regionName": "Pure Blind",
       "color": "#2ecc71",
-      "centerNx": 0.319609,
-      "centerNy": 0.550089
+      "centerNx": 0.42378,
+      "centerNy": 0.621179
     },
     "20000300": {
       "id": 20000300,
@@ -200,8 +200,8 @@
       "regionId": 10000023,
       "regionName": "Pure Blind",
       "color": "#2ecc71",
-      "centerNx": 0.345413,
-      "centerNy": 0.623368
+      "centerNx": 0.486395,
+      "centerNy": 0.79558
     },
     "20000301": {
       "id": 20000301,
@@ -209,8 +209,8 @@
       "regionId": 10000023,
       "regionName": "Pure Blind",
       "color": "#2ecc71",
-      "centerNx": 0.312305,
-      "centerNy": 0.608521
+      "centerNx": 0.406054,
+      "centerNy": 0.760244
     },
     "20000424": {
       "id": 20000424,
@@ -218,8 +218,8 @@
       "regionId": 10000035,
       "regionName": "Deklein",
       "color": "#e67e22",
-      "centerNx": 0.590899,
-      "centerNy": 0.438988
+      "centerNx": 0.543428,
+      "centerNy": 0.461729
     },
     "20000425": {
       "id": 20000425,
@@ -227,8 +227,8 @@
       "regionId": 10000035,
       "regionName": "Deklein",
       "color": "#e67e22",
-      "centerNx": 0.656137,
-      "centerNy": 0.421273
+      "centerNx": 0.615193,
+      "centerNy": 0.40953
     },
     "20000426": {
       "id": 20000426,
@@ -236,8 +236,8 @@
       "regionId": 10000035,
       "regionName": "Deklein",
       "color": "#e67e22",
-      "centerNx": 0.762652,
-      "centerNy": 0.419711
+      "centerNx": 0.732366,
+      "centerNy": 0.404926
     },
     "20000427": {
       "id": 20000427,
@@ -245,8 +245,8 @@
       "regionId": 10000035,
       "regionName": "Deklein",
       "color": "#e67e22",
-      "centerNx": 0.67089,
-      "centerNy": 0.399242
+      "centerNx": 0.631423,
+      "centerNy": 0.344613
     },
     "20000428": {
       "id": 20000428,
@@ -254,8 +254,8 @@
       "regionId": 10000035,
       "regionName": "Deklein",
       "color": "#e67e22",
-      "centerNx": 0.767413,
-      "centerNy": 0.380336
+      "centerNx": 0.737604,
+      "centerNy": 0.288904
     },
     "20000429": {
       "id": 20000429,
@@ -263,8 +263,8 @@
       "regionId": 10000035,
       "regionName": "Deklein",
       "color": "#e67e22",
-      "centerNx": 0.530208,
-      "centerNy": 0.42334
+      "centerNx": 0.476664,
+      "centerNy": 0.41562
     },
     "20000430": {
       "id": 20000430,
@@ -272,8 +272,8 @@
       "regionId": 10000035,
       "regionName": "Deklein",
       "color": "#e67e22",
-      "centerNx": 0.418414,
-      "centerNy": 0.440629
+      "centerNx": 0.353683,
+      "centerNy": 0.466563
     },
     "20000431": {
       "id": 20000431,
@@ -281,8 +281,8 @@
       "regionId": 10000035,
       "regionName": "Deklein",
       "color": "#e67e22",
-      "centerNx": 0.481684,
-      "centerNy": 0.389885
+      "centerNx": 0.423284,
+      "centerNy": 0.317042
     },
     "20000432": {
       "id": 20000432,
@@ -290,8 +290,8 @@
       "regionId": 10000035,
       "regionName": "Deklein",
       "color": "#e67e22",
-      "centerNx": 0.391314,
-      "centerNy": 0.38102
+      "centerNx": 0.323872,
+      "centerNy": 0.290919
     },
     "20000536": {
       "id": 20000536,
@@ -299,8 +299,8 @@
       "regionId": 10000046,
       "regionName": "Fade",
       "color": "#8957e5",
-      "centerNx": 0.364328,
-      "centerNy": 0.504404
+      "centerNx": 0.550622,
+      "centerNy": 0.560428
     },
     "20000537": {
       "id": 20000537,
@@ -308,8 +308,8 @@
       "regionId": 10000046,
       "regionName": "Fade",
       "color": "#8957e5",
-      "centerNx": 0.317401,
-      "centerNy": 0.508095
+      "centerNx": 0.424793,
+      "centerNy": 0.589779
     },
     "20000538": {
       "id": 20000538,
@@ -317,8 +317,8 @@
       "regionId": 10000046,
       "regionName": "Fade",
       "color": "#8957e5",
-      "centerNx": 0.314429,
-      "centerNy": 0.538
+      "centerNx": 0.422514,
+      "centerNy": 0.681285
     },
     "20000539": {
       "id": 20000539,
@@ -326,8 +326,8 @@
       "regionId": 10000046,
       "regionName": "Fade",
       "color": "#8957e5",
-      "centerNx": 0.30901,
-      "centerNy": 0.51602
+      "centerNx": 0.268681,
+      "centerNy": 0.610382
     }
   },
   "systems": [
@@ -339,8 +339,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000124,
       "constellationName": "1P-VL2",
-      "nx": 0.636245,
-      "ny": 0.602359
+      "nx": 0.350138,
+      "ny": 0.426519
     },
     {
       "id": 30000847,
@@ -350,8 +350,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000124,
       "constellationName": "1P-VL2",
-      "nx": 0.625619,
-      "ny": 0.610078
+      "nx": 0.331285,
+      "ny": 0.44489
     },
     {
       "id": 30000848,
@@ -361,8 +361,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000124,
       "constellationName": "1P-VL2",
-      "nx": 0.641422,
-      "ny": 0.618
+      "nx": 0.359323,
+      "ny": 0.463743
     },
     {
       "id": 30000849,
@@ -372,8 +372,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000124,
       "constellationName": "1P-VL2",
-      "nx": 0.627254,
-      "ny": 0.626734
+      "nx": 0.334185,
+      "ny": 0.48453
     },
     {
       "id": 30000850,
@@ -383,8 +383,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000124,
       "constellationName": "1P-VL2",
-      "nx": 0.61799,
-      "ny": 0.618203
+      "nx": 0.317749,
+      "ny": 0.464227
     },
     {
       "id": 30000851,
@@ -394,8 +394,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000124,
       "constellationName": "1P-VL2",
-      "nx": 0.623167,
-      "ny": 0.635063
+      "nx": 0.326934,
+      "ny": 0.504351
     },
     {
       "id": 30000852,
@@ -405,8 +405,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000125,
       "constellationName": "X-VN63",
-      "nx": 0.556142,
-      "ny": 0.545891
+      "nx": 0.208011,
+      "ny": 0.292127
     },
     {
       "id": 30000853,
@@ -416,8 +416,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000125,
       "constellationName": "X-VN63",
-      "nx": 0.577938,
-      "ny": 0.567219
+      "nx": 0.246685,
+      "ny": 0.342887
     },
     {
       "id": 30000854,
@@ -427,8 +427,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000125,
       "constellationName": "X-VN63",
-      "nx": 0.556142,
-      "ny": 0.567219
+      "nx": 0.208011,
+      "ny": 0.342887
     },
     {
       "id": 30000855,
@@ -438,8 +438,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000125,
       "constellationName": "X-VN63",
-      "nx": 0.537069,
-      "ny": 0.554016
+      "nx": 0.174171,
+      "ny": 0.311464
     },
     {
       "id": 30000856,
@@ -449,8 +449,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000125,
       "constellationName": "X-VN63",
-      "nx": 0.556142,
-      "ny": 0.554016
+      "nx": 0.208011,
+      "ny": 0.311464
     },
     {
       "id": 30000857,
@@ -460,8 +460,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000125,
       "constellationName": "X-VN63",
-      "nx": 0.554779,
-      "ny": 0.537766
+      "nx": 0.205594,
+      "ny": 0.27279
     },
     {
       "id": 30000858,
@@ -471,8 +471,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000125,
       "constellationName": "X-VN63",
-      "nx": 0.577938,
-      "ny": 0.53675
+      "nx": 0.246685,
+      "ny": 0.270373
     },
     {
       "id": 30000859,
@@ -482,8 +482,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000125,
       "constellationName": "X-VN63",
-      "nx": 0.537069,
-      "ny": 0.567219
+      "nx": 0.174171,
+      "ny": 0.342887
     },
     {
       "id": 30000860,
@@ -493,8 +493,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000125,
       "constellationName": "X-VN63",
-      "nx": 0.577938,
-      "ny": 0.554016
+      "nx": 0.246685,
+      "ny": 0.311464
     },
     {
       "id": 30000861,
@@ -504,8 +504,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000126,
       "constellationName": "LLAP-1",
-      "nx": 0.625619,
-      "ny": 0.590578
+      "nx": 0.331285,
+      "ny": 0.398481
     },
     {
       "id": 30000862,
@@ -515,8 +515,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000126,
       "constellationName": "LLAP-1",
-      "nx": 0.587475,
-      "ny": 0.579406
+      "nx": 0.263605,
+      "ny": 0.371892
     },
     {
       "id": 30000863,
@@ -526,8 +526,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000126,
       "constellationName": "LLAP-1",
-      "nx": 0.643329,
-      "ny": 0.583469
+      "nx": 0.362707,
+      "ny": 0.381561
     },
     {
       "id": 30000864,
@@ -537,8 +537,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000126,
       "constellationName": "LLAP-1",
-      "nx": 0.652865,
-      "ny": 0.574328
+      "nx": 0.379627,
+      "ny": 0.359807
     },
     {
       "id": 30000865,
@@ -548,8 +548,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000126,
       "constellationName": "LLAP-1",
-      "nx": 0.654228,
-      "ny": 0.564172
+      "nx": 0.382044,
+      "ny": 0.335635
     },
     {
       "id": 30000866,
@@ -559,8 +559,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000126,
       "constellationName": "LLAP-1",
-      "nx": 0.605185,
-      "ny": 0.589562
+      "nx": 0.295028,
+      "ny": 0.396064
     },
     {
       "id": 30000867,
@@ -570,8 +570,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000127,
       "constellationName": "52-JKU",
-      "nx": 0.654228,
-      "ny": 0.550969
+      "nx": 0.382044,
+      "ny": 0.304213
     },
     {
       "id": 30000868,
@@ -581,8 +581,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000127,
       "constellationName": "52-JKU",
-      "nx": 0.635155,
-      "ny": 0.550969
+      "nx": 0.348204,
+      "ny": 0.304213
     },
     {
       "id": 30000869,
@@ -592,8 +592,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000127,
       "constellationName": "52-JKU",
-      "nx": 0.617445,
-      "ny": 0.545891
+      "nx": 0.316782,
+      "ny": 0.292127
     },
     {
       "id": 30000870,
@@ -603,8 +603,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000127,
       "constellationName": "52-JKU",
-      "nx": 0.635155,
-      "ny": 0.541828
+      "nx": 0.348204,
+      "ny": 0.282459
     },
     {
       "id": 30000871,
@@ -614,8 +614,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000127,
       "constellationName": "52-JKU",
-      "nx": 0.654228,
-      "ny": 0.541828
+      "nx": 0.382044,
+      "ny": 0.282459
     },
     {
       "id": 30000872,
@@ -625,8 +625,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000127,
       "constellationName": "52-JKU",
-      "nx": 0.650141,
-      "ny": 0.528625
+      "nx": 0.374793,
+      "ny": 0.251036
     },
     {
       "id": 30000873,
@@ -636,8 +636,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000128,
       "constellationName": "E3-NLE",
-      "nx": 0.56486,
-      "ny": 0.622062
+      "nx": 0.223481,
+      "ny": 0.473412
     },
     {
       "id": 30000874,
@@ -647,8 +647,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000128,
       "constellationName": "E3-NLE",
-      "nx": 0.582298,
-      "ny": 0.624297
+      "nx": 0.25442,
+      "ny": 0.478729
     },
     {
       "id": 30000875,
@@ -658,8 +658,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000128,
       "constellationName": "E3-NLE",
-      "nx": 0.577394,
-      "ny": 0.614344
+      "nx": 0.245718,
+      "ny": 0.455041
     },
     {
       "id": 30000876,
@@ -669,8 +669,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000128,
       "constellationName": "E3-NLE",
-      "nx": 0.595648,
-      "ny": 0.617797
+      "nx": 0.278108,
+      "ny": 0.46326
     },
     {
       "id": 30000877,
@@ -680,8 +680,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000128,
       "constellationName": "E3-NLE",
-      "nx": 0.589927,
-      "ny": 0.605609
+      "nx": 0.267956,
+      "ny": 0.434254
     },
     {
       "id": 30000878,
@@ -691,8 +691,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000128,
       "constellationName": "E3-NLE",
-      "nx": 0.597283,
-      "ny": 0.628156
+      "nx": 0.281008,
+      "ny": 0.487914
     },
     {
       "id": 30000879,
@@ -702,8 +702,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000129,
       "constellationName": "GORV-P",
-      "nx": 0.552055,
-      "ny": 0.527609
+      "nx": 0.20076,
+      "ny": 0.248619
     },
     {
       "id": 30000880,
@@ -713,8 +713,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000129,
       "constellationName": "GORV-P",
-      "nx": 0.538432,
-      "ny": 0.522531
+      "nx": 0.176588,
+      "ny": 0.236533
     },
     {
       "id": 30000881,
@@ -724,8 +724,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000129,
       "constellationName": "GORV-P",
-      "nx": 0.558866,
-      "ny": 0.519484
+      "nx": 0.212845,
+      "ny": 0.229282
     },
     {
       "id": 30000882,
@@ -735,8 +735,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000129,
       "constellationName": "GORV-P",
-      "nx": 0.528896,
-      "ny": 0.515422
+      "nx": 0.159669,
+      "ny": 0.219613
     },
     {
       "id": 30000883,
@@ -746,8 +746,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000129,
       "constellationName": "GORV-P",
-      "nx": 0.526171,
-      "ny": 0.506281
+      "nx": 0.154834,
+      "ny": 0.197859
     },
     {
       "id": 30000884,
@@ -757,8 +757,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000129,
       "constellationName": "GORV-P",
-      "nx": 0.523446,
-      "ny": 0.499172
+      "nx": 0.15,
+      "ny": 0.180939
     },
     {
       "id": 30000885,
@@ -768,8 +768,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000129,
       "constellationName": "GORV-P",
-      "nx": 0.524809,
-      "ny": 0.529641
+      "nx": 0.152417,
+      "ny": 0.253453
     },
     {
       "id": 30000886,
@@ -779,8 +779,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000130,
       "constellationName": "03C-SU",
-      "nx": 0.553417,
-      "ny": 0.582453
+      "nx": 0.203177,
+      "ny": 0.379144
     },
     {
       "id": 30000887,
@@ -790,8 +790,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000130,
       "constellationName": "03C-SU",
-      "nx": 0.547968,
-      "ny": 0.592609
+      "nx": 0.193508,
+      "ny": 0.403315
     },
     {
       "id": 30000888,
@@ -801,8 +801,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000130,
       "constellationName": "03C-SU",
-      "nx": 0.565678,
-      "ny": 0.596672
+      "nx": 0.224931,
+      "ny": 0.412983
     },
     {
       "id": 30000889,
@@ -812,8 +812,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000130,
       "constellationName": "03C-SU",
-      "nx": 0.557504,
-      "ny": 0.605812
+      "nx": 0.210428,
+      "ny": 0.434738
     },
     {
       "id": 30000890,
@@ -823,8 +823,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000130,
       "constellationName": "03C-SU",
-      "nx": 0.547968,
-      "ny": 0.614953
+      "nx": 0.193508,
+      "ny": 0.456492
     },
     {
       "id": 30000891,
@@ -834,8 +834,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000130,
       "constellationName": "03C-SU",
-      "nx": 0.539794,
-      "ny": 0.602766
+      "nx": 0.179006,
+      "ny": 0.427486
     },
     {
       "id": 30000892,
@@ -845,8 +845,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000130,
       "constellationName": "03C-SU",
-      "nx": 0.526171,
-      "ny": 0.611906
+      "nx": 0.154834,
+      "ny": 0.44924
     },
     {
       "id": 30000893,
@@ -856,8 +856,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000130,
       "constellationName": "03C-SU",
-      "nx": 0.537069,
-      "ny": 0.626125
+      "nx": 0.174171,
+      "ny": 0.48308
     },
     {
       "id": 30000894,
@@ -867,8 +867,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000131,
       "constellationName": "W-XBGF",
-      "nx": 0.667578,
-      "ny": 0.630391
+      "nx": 0.405732,
+      "ny": 0.493232
     },
     {
       "id": 30000895,
@@ -878,8 +878,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000131,
       "constellationName": "W-XBGF",
-      "nx": 0.677387,
-      "ny": 0.5205
+      "nx": 0.423135,
+      "ny": 0.231699
     },
     {
       "id": 30000896,
@@ -889,8 +889,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000131,
       "constellationName": "W-XBGF",
-      "nx": 0.689647,
-      "ny": 0.512375
+      "nx": 0.44489,
+      "ny": 0.212362
     },
     {
       "id": 30000897,
@@ -900,8 +900,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000131,
       "constellationName": "W-XBGF",
-      "nx": 0.704633,
-      "ny": 0.506281
+      "nx": 0.471478,
+      "ny": 0.197859
     },
     {
       "id": 30000898,
@@ -911,8 +911,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000131,
       "constellationName": "W-XBGF",
-      "nx": 0.725067,
-      "ny": 0.502219
+      "nx": 0.507735,
+      "ny": 0.188191
     },
     {
       "id": 30000899,
@@ -922,8 +922,8 @@
       "regionColor": "#e74c3c",
       "constellationId": 20000131,
       "constellationName": "W-XBGF",
-      "nx": 0.745502,
-      "ny": 0.505266
+      "nx": 0.543992,
+      "ny": 0.195442
     },
     {
       "id": 30001963,
@@ -933,8 +933,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000289,
       "constellationName": "MDM8-J",
-      "nx": 0.400625,
-      "ny": 0.505266
+      "nx": 0.620373,
+      "ny": 0.514503
     },
     {
       "id": 30001964,
@@ -944,8 +944,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000289,
       "constellationName": "MDM8-J",
-      "nx": 0.419551,
-      "ny": 0.50425
+      "nx": 0.666298,
+      "ny": 0.512086
     },
     {
       "id": 30001965,
@@ -955,8 +955,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000289,
       "constellationName": "MDM8-J",
-      "nx": 0.4325,
-      "ny": 0.509328
+      "nx": 0.697721,
+      "ny": 0.524171
     },
     {
       "id": 30001966,
@@ -966,8 +966,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000289,
       "constellationName": "MDM8-J",
-      "nx": 0.410586,
-      "ny": 0.511359
+      "nx": 0.644544,
+      "ny": 0.529006
     },
     {
       "id": 30001967,
@@ -977,8 +977,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000289,
       "constellationName": "MDM8-J",
-      "nx": 0.39166,
-      "ny": 0.516437
+      "nx": 0.598619,
+      "ny": 0.541091
     },
     {
       "id": 30001968,
@@ -988,8 +988,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000289,
       "constellationName": "MDM8-J",
-      "nx": 0.448438,
-      "ny": 0.517453
+      "nx": 0.736395,
+      "ny": 0.543508
     },
     {
       "id": 30001969,
@@ -999,8 +999,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000290,
       "constellationName": "U8-CWA",
-      "nx": 0.461387,
-      "ny": 0.518469
+      "nx": 0.767818,
+      "ny": 0.545925
     },
     {
       "id": 30001970,
@@ -1010,8 +1010,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000290,
       "constellationName": "U8-CWA",
-      "nx": 0.47334,
-      "ny": 0.524563
+      "nx": 0.796823,
+      "ny": 0.560428
     },
     {
       "id": 30001971,
@@ -1021,8 +1021,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000290,
       "constellationName": "U8-CWA",
-      "nx": 0.467363,
-      "ny": 0.531672
+      "nx": 0.78232,
+      "ny": 0.577348
     },
     {
       "id": 30001972,
@@ -1032,8 +1032,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000290,
       "constellationName": "U8-CWA",
-      "nx": 0.482305,
-      "ny": 0.533703
+      "nx": 0.818577,
+      "ny": 0.582182
     },
     {
       "id": 30001973,
@@ -1043,8 +1043,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000290,
       "constellationName": "U8-CWA",
-      "nx": 0.459395,
-      "ny": 0.509328
+      "nx": 0.762983,
+      "ny": 0.524171
     },
     {
       "id": 30001974,
@@ -1054,8 +1054,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000290,
       "constellationName": "U8-CWA",
-      "nx": 0.47832,
-      "ny": 0.517453
+      "nx": 0.808909,
+      "ny": 0.543508
     },
     {
       "id": 30001975,
@@ -1065,8 +1065,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000290,
       "constellationName": "U8-CWA",
-      "nx": 0.489277,
-      "ny": 0.543859
+      "nx": 0.835497,
+      "ny": 0.606354
     },
     {
       "id": 30001976,
@@ -1076,8 +1076,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000290,
       "constellationName": "U8-CWA",
-      "nx": 0.494258,
-      "ny": 0.557063
+      "nx": 0.847583,
+      "ny": 0.637776
     },
     {
       "id": 30001977,
@@ -1087,8 +1087,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000291,
       "constellationName": "38G6-L",
-      "nx": 0.387676,
-      "ny": 0.539797
+      "nx": 0.58895,
+      "ny": 0.596685
     },
     {
       "id": 30001978,
@@ -1098,8 +1098,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000291,
       "constellationName": "38G6-L",
-      "nx": 0.387676,
-      "ny": 0.548937
+      "nx": 0.58895,
+      "ny": 0.618439
     },
     {
       "id": 30001979,
@@ -1109,8 +1109,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000291,
       "constellationName": "38G6-L",
-      "nx": 0.387676,
-      "ny": 0.559094
+      "nx": 0.58895,
+      "ny": 0.64261
     },
     {
       "id": 30001980,
@@ -1120,8 +1120,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000291,
       "constellationName": "38G6-L",
-      "nx": 0.37373,
-      "ny": 0.548937
+      "nx": 0.55511,
+      "ny": 0.618439
     },
     {
       "id": 30001981,
@@ -1131,8 +1131,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000291,
       "constellationName": "38G6-L",
-      "nx": 0.37373,
-      "ny": 0.559094
+      "nx": 0.55511,
+      "ny": 0.64261
     },
     {
       "id": 30001982,
@@ -1142,8 +1142,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000291,
       "constellationName": "38G6-L",
-      "nx": 0.37373,
-      "ny": 0.539797
+      "nx": 0.55511,
+      "ny": 0.596685
     },
     {
       "id": 30001983,
@@ -1153,8 +1153,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000291,
       "constellationName": "38G6-L",
-      "nx": 0.37373,
-      "ny": 0.531672
+      "nx": 0.55511,
+      "ny": 0.577348
     },
     {
       "id": 30001984,
@@ -1164,8 +1164,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000292,
       "constellationName": "YS-GOP",
-      "nx": 0.42752,
-      "ny": 0.611906
+      "nx": 0.685635,
+      "ny": 0.768301
     },
     {
       "id": 30001985,
@@ -1175,8 +1175,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000292,
       "constellationName": "YS-GOP",
-      "nx": 0.42752,
-      "ny": 0.60175
+      "nx": 0.685635,
+      "ny": 0.74413
     },
     {
       "id": 30001986,
@@ -1186,8 +1186,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000292,
       "constellationName": "YS-GOP",
-      "nx": 0.419551,
-      "ny": 0.586516
+      "nx": 0.666298,
+      "ny": 0.707873
     },
     {
       "id": 30001987,
@@ -1197,8 +1197,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000292,
       "constellationName": "YS-GOP",
-      "nx": 0.443457,
-      "ny": 0.605812
+      "nx": 0.724309,
+      "ny": 0.753798
     },
     {
       "id": 30001988,
@@ -1208,8 +1208,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000292,
       "constellationName": "YS-GOP",
-      "nx": 0.406602,
-      "ny": 0.578391
+      "nx": 0.634876,
+      "ny": 0.688536
     },
     {
       "id": 30001989,
@@ -1219,8 +1219,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000292,
       "constellationName": "YS-GOP",
-      "nx": 0.417559,
-      "ny": 0.575344
+      "nx": 0.661464,
+      "ny": 0.681285
     },
     {
       "id": 30001990,
@@ -1230,8 +1230,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000292,
       "constellationName": "YS-GOP",
-      "nx": 0.448438,
-      "ny": 0.613938
+      "nx": 0.736395,
+      "ny": 0.773135
     },
     {
       "id": 30001991,
@@ -1241,8 +1241,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000293,
       "constellationName": "WMP-OF",
-      "nx": 0.495254,
-      "ny": 0.522531
+      "nx": 0.85,
+      "ny": 0.555594
     },
     {
       "id": 30001992,
@@ -1252,8 +1252,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000293,
       "constellationName": "WMP-OF",
-      "nx": 0.487285,
-      "ny": 0.507297
+      "nx": 0.830663,
+      "ny": 0.519337
     },
     {
       "id": 30001993,
@@ -1263,8 +1263,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000293,
       "constellationName": "WMP-OF",
-      "nx": 0.472344,
-      "ny": 0.501203
+      "nx": 0.794406,
+      "ny": 0.504834
     },
     {
       "id": 30001994,
@@ -1274,8 +1274,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000293,
       "constellationName": "WMP-OF",
-      "nx": 0.467363,
-      "ny": 0.492063
+      "nx": 0.78232,
+      "ny": 0.48308
     },
     {
       "id": 30001995,
@@ -1285,8 +1285,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000293,
       "constellationName": "WMP-OF",
-      "nx": 0.489277,
-      "ny": 0.495109
+      "nx": 0.835497,
+      "ny": 0.490331
     },
     {
       "id": 30001996,
@@ -1296,8 +1296,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000293,
       "constellationName": "WMP-OF",
-      "nx": 0.484297,
-      "ny": 0.488
+      "nx": 0.823412,
+      "ny": 0.473412
     },
     {
       "id": 30001997,
@@ -1307,8 +1307,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000293,
       "constellationName": "WMP-OF",
-      "nx": 0.446445,
-      "ny": 0.490031
+      "nx": 0.731561,
+      "ny": 0.478246
     },
     {
       "id": 30001998,
@@ -1318,8 +1318,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000294,
       "constellationName": "LY-FY6",
-      "nx": 0.488281,
-      "ny": 0.568234
+      "nx": 0.83308,
+      "ny": 0.664365
     },
     {
       "id": 30001999,
@@ -1329,8 +1329,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000294,
       "constellationName": "LY-FY6",
-      "nx": 0.484297,
-      "ny": 0.578391
+      "nx": 0.823412,
+      "ny": 0.688536
     },
     {
       "id": 30002000,
@@ -1340,8 +1340,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000294,
       "constellationName": "LY-FY6",
-      "nx": 0.469355,
-      "ny": 0.579406
+      "nx": 0.787155,
+      "ny": 0.690953
     },
     {
       "id": 30002001,
@@ -1351,8 +1351,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000294,
       "constellationName": "LY-FY6",
-      "nx": 0.476328,
-      "ny": 0.586516
+      "nx": 0.804075,
+      "ny": 0.707873
     },
     {
       "id": 30002002,
@@ -1362,8 +1362,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000294,
       "constellationName": "LY-FY6",
-      "nx": 0.460391,
-      "ny": 0.598703
+      "nx": 0.765401,
+      "ny": 0.736878
     },
     {
       "id": 30002003,
@@ -1373,8 +1373,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000294,
       "constellationName": "LY-FY6",
-      "nx": 0.488281,
-      "ny": 0.591594
+      "nx": 0.83308,
+      "ny": 0.719959
     },
     {
       "id": 30002004,
@@ -1384,8 +1384,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000295,
       "constellationName": "U-7RBK",
-      "nx": 0.43748,
-      "ny": 0.522531
+      "nx": 0.709807,
+      "ny": 0.555594
     },
     {
       "id": 30002005,
@@ -1395,8 +1395,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000295,
       "constellationName": "U-7RBK",
-      "nx": 0.428516,
-      "ny": 0.530656
+      "nx": 0.688052,
+      "ny": 0.574931
     },
     {
       "id": 30002006,
@@ -1406,8 +1406,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000295,
       "constellationName": "U-7RBK",
-      "nx": 0.424531,
-      "ny": 0.540813
+      "nx": 0.678384,
+      "ny": 0.599102
     },
     {
       "id": 30002007,
@@ -1417,8 +1417,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000295,
       "constellationName": "U-7RBK",
-      "nx": 0.421543,
-      "ny": 0.523547
+      "nx": 0.671133,
+      "ny": 0.558011
     },
     {
       "id": 30002008,
@@ -1428,8 +1428,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000295,
       "constellationName": "U-7RBK",
-      "nx": 0.440469,
-      "ny": 0.540813
+      "nx": 0.717058,
+      "ny": 0.599102
     },
     {
       "id": 30002009,
@@ -1439,8 +1439,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000295,
       "constellationName": "U-7RBK",
-      "nx": 0.4325,
-      "ny": 0.551984
+      "nx": 0.697721,
+      "ny": 0.625691
     },
     {
       "id": 30002010,
@@ -1450,8 +1450,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000296,
       "constellationName": "G8-D09",
-      "nx": 0.417559,
-      "ny": 0.562141
+      "nx": 0.661464,
+      "ny": 0.649862
     },
     {
       "id": 30002011,
@@ -1461,8 +1461,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000296,
       "constellationName": "G8-D09",
-      "nx": 0.415566,
-      "ny": 0.548937
+      "nx": 0.65663,
+      "ny": 0.618439
     },
     {
       "id": 30002012,
@@ -1472,8 +1472,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000296,
       "constellationName": "G8-D09",
-      "nx": 0.402617,
-      "ny": 0.548937
+      "nx": 0.625207,
+      "ny": 0.618439
     },
     {
       "id": 30002013,
@@ -1483,8 +1483,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000296,
       "constellationName": "G8-D09",
-      "nx": 0.402617,
-      "ny": 0.539797
+      "nx": 0.625207,
+      "ny": 0.596685
     },
     {
       "id": 30002014,
@@ -1494,8 +1494,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000296,
       "constellationName": "G8-D09",
-      "nx": 0.406602,
-      "ny": 0.523547
+      "nx": 0.634876,
+      "ny": 0.558011
     },
     {
       "id": 30002015,
@@ -1505,8 +1505,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000296,
       "constellationName": "G8-D09",
-      "nx": 0.396641,
-      "ny": 0.528625
+      "nx": 0.610704,
+      "ny": 0.570097
     },
     {
       "id": 30002016,
@@ -1516,8 +1516,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000297,
       "constellationName": "304Z-R",
-      "nx": 0.359785,
-      "ny": 0.548937
+      "nx": 0.521271,
+      "ny": 0.618439
     },
     {
       "id": 30002017,
@@ -1527,8 +1527,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000297,
       "constellationName": "304Z-R",
-      "nx": 0.359785,
-      "ny": 0.559094
+      "nx": 0.521271,
+      "ny": 0.64261
     },
     {
       "id": 30002018,
@@ -1538,8 +1538,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000297,
       "constellationName": "304Z-R",
-      "nx": 0.34584,
-      "ny": 0.559094
+      "nx": 0.487431,
+      "ny": 0.64261
     },
     {
       "id": 30002019,
@@ -1549,8 +1549,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000297,
       "constellationName": "304Z-R",
-      "nx": 0.34584,
-      "ny": 0.548937
+      "nx": 0.487431,
+      "ny": 0.618439
     },
     {
       "id": 30002020,
@@ -1560,8 +1560,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000297,
       "constellationName": "304Z-R",
-      "nx": 0.354805,
-      "ny": 0.538781
+      "nx": 0.509185,
+      "ny": 0.594268
     },
     {
       "id": 30002021,
@@ -1571,8 +1571,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000297,
       "constellationName": "304Z-R",
-      "nx": 0.34584,
-      "ny": 0.56925
+      "nx": 0.487431,
+      "ny": 0.666782
     },
     {
       "id": 30002022,
@@ -1582,8 +1582,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000297,
       "constellationName": "304Z-R",
-      "nx": 0.347832,
-      "ny": 0.581438
+      "nx": 0.492265,
+      "ny": 0.695787
     },
     {
       "id": 30002023,
@@ -1593,8 +1593,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000298,
       "constellationName": "K-QUVW",
-      "nx": 0.374727,
-      "ny": 0.576359
+      "nx": 0.557528,
+      "ny": 0.683702
     },
     {
       "id": 30002024,
@@ -1604,8 +1604,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000298,
       "constellationName": "K-QUVW",
-      "nx": 0.378711,
-      "ny": 0.589562
+      "nx": 0.567196,
+      "ny": 0.715124
     },
     {
       "id": 30002025,
@@ -1615,8 +1615,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000298,
       "constellationName": "K-QUVW",
-      "nx": 0.392656,
-      "ny": 0.607844
+      "nx": 0.601036,
+      "ny": 0.758633
     },
     {
       "id": 30002026,
@@ -1626,8 +1626,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000298,
       "constellationName": "K-QUVW",
-      "nx": 0.396641,
-      "ny": 0.616984
+      "nx": 0.610704,
+      "ny": 0.780387
     },
     {
       "id": 30002027,
@@ -1637,8 +1637,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000298,
       "constellationName": "K-QUVW",
-      "nx": 0.381699,
-      "ny": 0.60175
+      "nx": 0.574448,
+      "ny": 0.74413
     },
     {
       "id": 30002028,
@@ -1648,8 +1648,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000298,
       "constellationName": "K-QUVW",
-      "nx": 0.36875,
-      "ny": 0.608859
+      "nx": 0.543025,
+      "ny": 0.76105
     },
     {
       "id": 30002029,
@@ -1659,8 +1659,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000299,
       "constellationName": "LN-L8L",
-      "nx": 0.332891,
-      "ny": 0.548937
+      "nx": 0.456008,
+      "ny": 0.618439
     },
     {
       "id": 30002030,
@@ -1670,8 +1670,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000299,
       "constellationName": "LN-L8L",
-      "nx": 0.317949,
-      "ny": 0.548937
+      "nx": 0.419751,
+      "ny": 0.618439
     },
     {
       "id": 30002031,
@@ -1681,8 +1681,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000299,
       "constellationName": "LN-L8L",
-      "nx": 0.325918,
-      "ny": 0.539797
+      "nx": 0.439088,
+      "ny": 0.596685
     },
     {
       "id": 30002032,
@@ -1692,8 +1692,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000299,
       "constellationName": "LN-L8L",
-      "nx": 0.305,
-      "ny": 0.548937
+      "nx": 0.388329,
+      "ny": 0.618439
     },
     {
       "id": 30002033,
@@ -1703,8 +1703,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000299,
       "constellationName": "LN-L8L",
-      "nx": 0.310977,
-      "ny": 0.557063
+      "nx": 0.402831,
+      "ny": 0.637776
     },
     {
       "id": 30002034,
@@ -1714,8 +1714,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000299,
       "constellationName": "LN-L8L",
-      "nx": 0.324922,
-      "ny": 0.556859
+      "nx": 0.436671,
+      "ny": 0.637293
     },
     {
       "id": 30002035,
@@ -1725,8 +1725,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000300,
       "constellationName": "S4GH-I",
-      "nx": 0.353809,
-      "ny": 0.613938
+      "nx": 0.506768,
+      "ny": 0.773135
     },
     {
       "id": 30002036,
@@ -1736,8 +1736,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000300,
       "constellationName": "S4GH-I",
-      "nx": 0.347832,
-      "ny": 0.623078
+      "nx": 0.492265,
+      "ny": 0.79489
     },
     {
       "id": 30002037,
@@ -1747,8 +1747,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000300,
       "constellationName": "S4GH-I",
-      "nx": 0.333887,
-      "ny": 0.623078
+      "nx": 0.458425,
+      "ny": 0.79489
     },
     {
       "id": 30002038,
@@ -1758,8 +1758,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000300,
       "constellationName": "S4GH-I",
-      "nx": 0.338867,
-      "ny": 0.613938
+      "nx": 0.470511,
+      "ny": 0.773135
     },
     {
       "id": 30002039,
@@ -1769,8 +1769,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000300,
       "constellationName": "S4GH-I",
-      "nx": 0.361777,
-      "ny": 0.623078
+      "nx": 0.526105,
+      "ny": 0.79489
     },
     {
       "id": 30002040,
@@ -1780,8 +1780,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000300,
       "constellationName": "S4GH-I",
-      "nx": 0.347832,
-      "ny": 0.633234
+      "nx": 0.492265,
+      "ny": 0.819061
     },
     {
       "id": 30002041,
@@ -1791,8 +1791,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000300,
       "constellationName": "S4GH-I",
-      "nx": 0.333887,
-      "ny": 0.633234
+      "nx": 0.458425,
+      "ny": 0.819061
     },
     {
       "id": 30002042,
@@ -1802,8 +1802,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000301,
       "constellationName": "0A-73B",
-      "nx": 0.310977,
-      "ny": 0.590578
+      "nx": 0.402831,
+      "ny": 0.717541
     },
     {
       "id": 30002043,
@@ -1813,8 +1813,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000301,
       "constellationName": "0A-73B",
-      "nx": 0.310977,
-      "ny": 0.598703
+      "nx": 0.402831,
+      "ny": 0.736878
     },
     {
       "id": 30002044,
@@ -1824,8 +1824,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000301,
       "constellationName": "0A-73B",
-      "nx": 0.310977,
-      "ny": 0.606828
+      "nx": 0.402831,
+      "ny": 0.756215
     },
     {
       "id": 30002045,
@@ -1835,8 +1835,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000301,
       "constellationName": "0A-73B",
-      "nx": 0.317949,
-      "ny": 0.614953
+      "nx": 0.419751,
+      "ny": 0.775552
     },
     {
       "id": 30002046,
@@ -1846,8 +1846,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000301,
       "constellationName": "0A-73B",
-      "nx": 0.305,
-      "ny": 0.614953
+      "nx": 0.388329,
+      "ny": 0.775552
     },
     {
       "id": 30002047,
@@ -1857,8 +1857,8 @@
       "regionColor": "#2ecc71",
       "constellationId": 20000301,
       "constellationName": "0A-73B",
-      "nx": 0.317949,
-      "ny": 0.625109
+      "nx": 0.419751,
+      "ny": 0.799724
     },
     {
       "id": 30002889,
@@ -1868,8 +1868,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000424,
       "constellationName": "29V-1R",
-      "nx": 0.612506,
-      "ny": 0.442133
+      "nx": 0.567196,
+      "ny": 0.470994
     },
     {
       "id": 30002890,
@@ -1879,8 +1879,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000424,
       "constellationName": "29V-1R",
-      "nx": 0.581744,
-      "ny": 0.446234
+      "nx": 0.533356,
+      "ny": 0.48308
     },
     {
       "id": 30002891,
@@ -1890,8 +1890,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000424,
       "constellationName": "29V-1R",
-      "nx": 0.583941,
-      "ny": 0.436391
+      "nx": 0.535773,
+      "ny": 0.454075
     },
     {
       "id": 30002892,
@@ -1901,8 +1901,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000424,
       "constellationName": "29V-1R",
-      "nx": 0.621295,
-      "ny": 0.436391
+      "nx": 0.576865,
+      "ny": 0.454075
     },
     {
       "id": 30002893,
@@ -1912,8 +1912,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000424,
       "constellationName": "29V-1R",
-      "nx": 0.588336,
-      "ny": 0.430648
+      "nx": 0.540608,
+      "ny": 0.437155
     },
     {
       "id": 30002894,
@@ -1923,8 +1923,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000424,
       "constellationName": "29V-1R",
-      "nx": 0.557574,
-      "ny": 0.442133
+      "nx": 0.506768,
+      "ny": 0.470994
     },
     {
       "id": 30002895,
@@ -1934,8 +1934,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000425,
       "constellationName": "Z-D6K5",
-      "nx": 0.614703,
-      "ny": 0.424906
+      "nx": 0.569613,
+      "ny": 0.420235
     },
     {
       "id": 30002896,
@@ -1945,8 +1945,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000425,
       "constellationName": "Z-D6K5",
-      "nx": 0.638873,
-      "ny": 0.430648
+      "nx": 0.596202,
+      "ny": 0.437155
     },
     {
       "id": 30002897,
@@ -1956,8 +1956,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000425,
       "constellationName": "Z-D6K5",
-      "nx": 0.636676,
-      "ny": 0.419984
+      "nx": 0.593785,
+      "ny": 0.405732
     },
     {
       "id": 30002898,
@@ -1967,8 +1967,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000425,
       "constellationName": "Z-D6K5",
-      "nx": 0.663043,
-      "ny": 0.423266
+      "nx": 0.62279,
+      "ny": 0.415401
     },
     {
       "id": 30002899,
@@ -1978,8 +1978,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000425,
       "constellationName": "Z-D6K5",
-      "nx": 0.669635,
-      "ny": 0.415883
+      "nx": 0.630041,
+      "ny": 0.393646
     },
     {
       "id": 30002900,
@@ -1989,8 +1989,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000425,
       "constellationName": "Z-D6K5",
-      "nx": 0.678424,
-      "ny": 0.40932
+      "nx": 0.63971,
+      "ny": 0.374309
     },
     {
       "id": 30002901,
@@ -2000,8 +2000,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000425,
       "constellationName": "Z-D6K5",
-      "nx": 0.691607,
-      "ny": 0.424906
+      "nx": 0.654213,
+      "ny": 0.420235
     },
     {
       "id": 30002902,
@@ -2011,8 +2011,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000426,
       "constellationName": "VW7-YN",
-      "nx": 0.742145,
-      "ny": 0.428187
+      "nx": 0.709807,
+      "ny": 0.429903
     },
     {
       "id": 30002903,
@@ -2022,8 +2022,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000426,
       "constellationName": "VW7-YN",
-      "nx": 0.742145,
-      "ny": 0.420805
+      "nx": 0.709807,
+      "ny": 0.408149
     },
     {
       "id": 30002904,
@@ -2033,8 +2033,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000426,
       "constellationName": "VW7-YN",
-      "nx": 0.772906,
-      "ny": 0.413422
+      "nx": 0.743646,
+      "ny": 0.386395
     },
     {
       "id": 30002905,
@@ -2044,8 +2044,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000426,
       "constellationName": "VW7-YN",
-      "nx": 0.772906,
-      "ny": 0.420805
+      "nx": 0.743646,
+      "ny": 0.408149
     },
     {
       "id": 30002906,
@@ -2055,8 +2055,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000426,
       "constellationName": "VW7-YN",
-      "nx": 0.772906,
-      "ny": 0.428187
+      "nx": 0.743646,
+      "ny": 0.429903
     },
     {
       "id": 30002907,
@@ -2066,8 +2066,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000426,
       "constellationName": "VW7-YN",
-      "nx": 0.772906,
-      "ny": 0.406859
+      "nx": 0.743646,
+      "ny": 0.367058
     },
     {
       "id": 30002908,
@@ -2077,8 +2077,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000427,
       "constellationName": "UTQ-BO",
-      "nx": 0.726764,
-      "ny": 0.406039
+      "nx": 0.692887,
+      "ny": 0.364641
     },
     {
       "id": 30002909,
@@ -2088,8 +2088,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000427,
       "constellationName": "UTQ-BO",
-      "nx": 0.696002,
-      "ny": 0.402758
+      "nx": 0.659047,
+      "ny": 0.354972
     },
     {
       "id": 30002910,
@@ -2099,8 +2099,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000427,
       "constellationName": "UTQ-BO",
-      "nx": 0.702594,
-      "ny": 0.394555
+      "nx": 0.666298,
+      "ny": 0.330801
     },
     {
       "id": 30002911,
@@ -2110,8 +2110,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000427,
       "constellationName": "UTQ-BO",
-      "nx": 0.656451,
-      "ny": 0.401117
+      "nx": 0.615539,
+      "ny": 0.350138
     },
     {
       "id": 30002912,
@@ -2121,8 +2121,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000427,
       "constellationName": "UTQ-BO",
-      "nx": 0.660846,
-      "ny": 0.392914
+      "nx": 0.620373,
+      "ny": 0.325967
     },
     {
       "id": 30002913,
@@ -2132,8 +2132,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000427,
       "constellationName": "UTQ-BO",
-      "nx": 0.625689,
-      "ny": 0.402758
+      "nx": 0.581699,
+      "ny": 0.354972
     },
     {
       "id": 30002914,
@@ -2143,8 +2143,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000427,
       "constellationName": "UTQ-BO",
-      "nx": 0.627887,
-      "ny": 0.394555
+      "nx": 0.584116,
+      "ny": 0.330801
     },
     {
       "id": 30002915,
@@ -2154,8 +2154,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000428,
       "constellationName": "N-U2LX",
-      "nx": 0.772906,
-      "ny": 0.392914
+      "nx": 0.743646,
+      "ny": 0.325967
     },
     {
       "id": 30002916,
@@ -2165,8 +2165,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000428,
       "constellationName": "N-U2LX",
-      "nx": 0.772906,
-      "ny": 0.386352
+      "nx": 0.743646,
+      "ny": 0.30663
     },
     {
       "id": 30002917,
@@ -2176,8 +2176,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000428,
       "constellationName": "N-U2LX",
-      "nx": 0.772906,
-      "ny": 0.379789
+      "nx": 0.743646,
+      "ny": 0.287293
     },
     {
       "id": 30002918,
@@ -2187,8 +2187,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000428,
       "constellationName": "N-U2LX",
-      "nx": 0.772906,
-      "ny": 0.373227
+      "nx": 0.743646,
+      "ny": 0.267956
     },
     {
       "id": 30002919,
@@ -2198,8 +2198,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000428,
       "constellationName": "N-U2LX",
-      "nx": 0.739947,
-      "ny": 0.38307
+      "nx": 0.70739,
+      "ny": 0.296961
     },
     {
       "id": 30002920,
@@ -2209,8 +2209,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000428,
       "constellationName": "N-U2LX",
-      "nx": 0.772906,
-      "ny": 0.366664
+      "nx": 0.743646,
+      "ny": 0.248619
     },
     {
       "id": 30002921,
@@ -2220,8 +2220,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000429,
       "constellationName": "S-B1E4",
-      "nx": 0.590533,
-      "ny": 0.406039
+      "nx": 0.543025,
+      "ny": 0.364641
     },
     {
       "id": 30002922,
@@ -2231,8 +2231,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000429,
       "constellationName": "S-B1E4",
-      "nx": 0.581744,
-      "ny": 0.399477
+      "nx": 0.533356,
+      "ny": 0.345304
     },
     {
       "id": 30002923,
@@ -2242,8 +2242,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000429,
       "constellationName": "S-B1E4",
-      "nx": 0.537799,
-      "ny": 0.415883
+      "nx": 0.485014,
+      "ny": 0.393646
     },
     {
       "id": 30002924,
@@ -2253,8 +2253,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000429,
       "constellationName": "S-B1E4",
-      "nx": 0.597125,
-      "ny": 0.391273
+      "nx": 0.550276,
+      "ny": 0.321133
     },
     {
       "id": 30002925,
@@ -2264,8 +2264,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000429,
       "constellationName": "S-B1E4",
-      "nx": 0.561969,
-      "ny": 0.395375
+      "nx": 0.511602,
+      "ny": 0.333218
     },
     {
       "id": 30002926,
@@ -2275,8 +2275,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000429,
       "constellationName": "S-B1E4",
-      "nx": 0.515826,
-      "ny": 0.422445
+      "nx": 0.460843,
+      "ny": 0.412983
     },
     {
       "id": 30002927,
@@ -2286,8 +2286,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000429,
       "constellationName": "S-B1E4",
-      "nx": 0.493854,
-      "ny": 0.43557
+      "nx": 0.436671,
+      "ny": 0.451657
     },
     {
       "id": 30002928,
@@ -2297,8 +2297,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000429,
       "constellationName": "S-B1E4",
-      "nx": 0.489459,
-      "ny": 0.447055
+      "nx": 0.431837,
+      "ny": 0.485497
     },
     {
       "id": 30002929,
@@ -2308,8 +2308,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000429,
       "constellationName": "S-B1E4",
-      "nx": 0.518023,
-      "ny": 0.437211
+      "nx": 0.46326,
+      "ny": 0.456492
     },
     {
       "id": 30002930,
@@ -2319,8 +2319,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000429,
       "constellationName": "S-B1E4",
-      "nx": 0.493854,
-      "ny": 0.456898
+      "nx": 0.436671,
+      "ny": 0.514503
     },
     {
       "id": 30002931,
@@ -2330,8 +2330,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000429,
       "constellationName": "S-B1E4",
-      "nx": 0.452105,
-      "ny": 0.449516
+      "nx": 0.390746,
+      "ny": 0.492749
     },
     {
       "id": 30002932,
@@ -2341,8 +2341,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000430,
       "constellationName": "A21H-Z",
-      "nx": 0.449908,
-      "ny": 0.438031
+      "nx": 0.388329,
+      "ny": 0.458909
     },
     {
       "id": 30002933,
@@ -2352,8 +2352,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000430,
       "constellationName": "A21H-Z",
-      "nx": 0.416949,
-      "ny": 0.441312
+      "nx": 0.352072,
+      "ny": 0.468577
     },
     {
       "id": 30002934,
@@ -2363,8 +2363,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000430,
       "constellationName": "A21H-Z",
-      "nx": 0.421344,
-      "ny": 0.432289
+      "nx": 0.356906,
+      "ny": 0.441989
     },
     {
       "id": 30002935,
@@ -2374,8 +2374,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000430,
       "constellationName": "A21H-Z",
-      "nx": 0.390582,
-      "ny": 0.448695
+      "nx": 0.323066,
+      "ny": 0.490331
     },
     {
       "id": 30002936,
@@ -2385,8 +2385,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000430,
       "constellationName": "A21H-Z",
-      "nx": 0.452105,
-      "ny": 0.427367
+      "nx": 0.390746,
+      "ny": 0.427486
     },
     {
       "id": 30002937,
@@ -2396,8 +2396,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000430,
       "constellationName": "A21H-Z",
-      "nx": 0.379596,
-      "ny": 0.456078
+      "nx": 0.310981,
+      "ny": 0.512086
     },
     {
       "id": 30002938,
@@ -2407,8 +2407,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000431,
       "constellationName": "RFY-QB",
-      "nx": 0.487262,
-      "ny": 0.405219
+      "nx": 0.42942,
+      "ny": 0.362224
     },
     {
       "id": 30002939,
@@ -2418,8 +2418,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000431,
       "constellationName": "RFY-QB",
-      "nx": 0.50484,
-      "ny": 0.396195
+      "nx": 0.448757,
+      "ny": 0.335635
     },
     {
       "id": 30002940,
@@ -2429,8 +2429,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000431,
       "constellationName": "RFY-QB",
-      "nx": 0.458697,
-      "ny": 0.405219
+      "nx": 0.397997,
+      "ny": 0.362224
     },
     {
       "id": 30002941,
@@ -2440,8 +2440,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000431,
       "constellationName": "RFY-QB",
-      "nx": 0.542193,
-      "ny": 0.387992
+      "nx": 0.489848,
+      "ny": 0.311464
     },
     {
       "id": 30002942,
@@ -2451,8 +2451,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000431,
       "constellationName": "RFY-QB",
-      "nx": 0.430133,
-      "ny": 0.405219
+      "nx": 0.366575,
+      "ny": 0.362224
     },
     {
       "id": 30002943,
@@ -2462,8 +2462,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000431,
       "constellationName": "RFY-QB",
-      "nx": 0.401568,
-      "ny": 0.405219
+      "nx": 0.335152,
+      "ny": 0.362224
     },
     {
       "id": 30002944,
@@ -2473,8 +2473,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000431,
       "constellationName": "RFY-QB",
-      "nx": 0.50484,
-      "ny": 0.387992
+      "nx": 0.448757,
+      "ny": 0.311464
     },
     {
       "id": 30002945,
@@ -2484,8 +2484,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000431,
       "constellationName": "RFY-QB",
-      "nx": 0.465289,
-      "ny": 0.396195
+      "nx": 0.405249,
+      "ny": 0.335635
     },
     {
       "id": 30002946,
@@ -2495,8 +2495,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000431,
       "constellationName": "RFY-QB",
-      "nx": 0.487262,
-      "ny": 0.365023
+      "nx": 0.42942,
+      "ny": 0.243785
     },
     {
       "id": 30002947,
@@ -2506,8 +2506,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000431,
       "constellationName": "RFY-QB",
-      "nx": 0.452105,
-      "ny": 0.373227
+      "nx": 0.390746,
+      "ny": 0.267956
     },
     {
       "id": 30002948,
@@ -2517,8 +2517,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000431,
       "constellationName": "RFY-QB",
-      "nx": 0.465289,
-      "ny": 0.387992
+      "nx": 0.405249,
+      "ny": 0.311464
     },
     {
       "id": 30002949,
@@ -2528,8 +2528,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000431,
       "constellationName": "RFY-QB",
-      "nx": 0.520221,
-      "ny": 0.373227
+      "nx": 0.465677,
+      "ny": 0.267956
     },
     {
       "id": 30002950,
@@ -2539,8 +2539,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000431,
       "constellationName": "RFY-QB",
-      "nx": 0.542193,
-      "ny": 0.379789
+      "nx": 0.489848,
+      "ny": 0.287293
     },
     {
       "id": 30002951,
@@ -2550,8 +2550,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000432,
       "constellationName": "D-AWFI",
-      "nx": 0.401568,
-      "ny": 0.392914
+      "nx": 0.335152,
+      "ny": 0.325967
     },
     {
       "id": 30002952,
@@ -2561,8 +2561,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000432,
       "constellationName": "D-AWFI",
-      "nx": 0.401568,
-      "ny": 0.385531
+      "nx": 0.335152,
+      "ny": 0.304213
     },
     {
       "id": 30002953,
@@ -2572,8 +2572,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000432,
       "constellationName": "D-AWFI",
-      "nx": 0.401568,
-      "ny": 0.378148
+      "nx": 0.335152,
+      "ny": 0.282459
     },
     {
       "id": 30002954,
@@ -2583,8 +2583,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000432,
       "constellationName": "D-AWFI",
-      "nx": 0.370807,
-      "ny": 0.374047
+      "nx": 0.301312,
+      "ny": 0.270373
     },
     {
       "id": 30002955,
@@ -2594,8 +2594,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000432,
       "constellationName": "D-AWFI",
-      "nx": 0.401568,
-      "ny": 0.369945
+      "nx": 0.335152,
+      "ny": 0.258287
     },
     {
       "id": 30002956,
@@ -2605,8 +2605,8 @@
       "regionColor": "#e67e22",
       "constellationId": 20000432,
       "constellationName": "D-AWFI",
-      "nx": 0.370807,
-      "ny": 0.385531
+      "nx": 0.301312,
+      "ny": 0.304213
     },
     {
       "id": 30003676,
@@ -2616,8 +2616,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000536,
       "constellationName": "XFLN-F",
-      "nx": 0.37373,
-      "ny": 0.515422
+      "nx": 0.55511,
+      "ny": 0.538674
     },
     {
       "id": 30003677,
@@ -2627,8 +2627,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000536,
       "constellationName": "XFLN-F",
-      "nx": 0.37373,
-      "ny": 0.506281
+      "nx": 0.55511,
+      "ny": 0.51692
     },
     {
       "id": 30003678,
@@ -2638,8 +2638,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000536,
       "constellationName": "XFLN-F",
-      "nx": 0.362,
-      "ny": 0.51
+      "nx": 0.550276,
+      "ny": 0.603936
     },
     {
       "id": 30003679,
@@ -2649,8 +2649,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000536,
       "constellationName": "XFLN-F",
-      "nx": 0.368,
-      "ny": 0.507
+      "nx": 0.576865,
+      "ny": 0.603936
     },
     {
       "id": 30003680,
@@ -2660,8 +2660,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000536,
       "constellationName": "XFLN-F",
-      "nx": 0.36,
-      "ny": 0.496
+      "nx": 0.550276,
+      "ny": 0.577348
     },
     {
       "id": 30003681,
@@ -2671,8 +2671,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000536,
       "constellationName": "XFLN-F",
-      "nx": 0.366,
-      "ny": 0.5
+      "nx": 0.576865,
+      "ny": 0.589434
     },
     {
       "id": 30003682,
@@ -2682,8 +2682,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000536,
       "constellationName": "XFLN-F",
-      "nx": 0.346836,
-      "ny": 0.496125
+      "nx": 0.489848,
+      "ny": 0.492749
     },
     {
       "id": 30003683,
@@ -2693,8 +2693,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000537,
       "constellationName": "UWRZ-2",
-      "nx": 0.32791,
-      "ny": 0.506281
+      "nx": 0.443923,
+      "ny": 0.51692
     },
     {
       "id": 30003684,
@@ -2704,8 +2704,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000537,
       "constellationName": "UWRZ-2",
-      "nx": 0.322,
-      "ny": 0.497
+      "nx": 0.441506,
+      "ny": 0.601519
     },
     {
       "id": 30003685,
@@ -2715,8 +2715,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000537,
       "constellationName": "UWRZ-2",
-      "nx": 0.315957,
-      "ny": 0.5205
+      "nx": 0.414917,
+      "ny": 0.55076
     },
     {
       "id": 30003686,
@@ -2726,8 +2726,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000537,
       "constellationName": "UWRZ-2",
-      "nx": 0.319,
-      "ny": 0.504
+      "nx": 0.428453,
+      "ny": 0.613605
     },
     {
       "id": 30003687,
@@ -2737,8 +2737,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000537,
       "constellationName": "UWRZ-2",
-      "nx": 0.315,
-      "ny": 0.497
+      "nx": 0.414917,
+      "ny": 0.601519
     },
     {
       "id": 30003688,
@@ -2748,8 +2748,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000537,
       "constellationName": "UWRZ-2",
-      "nx": 0.311941,
-      "ny": 0.520882
+      "nx": 0.414917,
+      "ny": 0.628108
     },
     {
       "id": 30003689,
@@ -2759,8 +2759,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000537,
       "constellationName": "UWRZ-2",
-      "nx": 0.31,
-      "ny": 0.511
+      "nx": 0.414917,
+      "ny": 0.616022
     },
     {
       "id": 30003690,
@@ -2770,8 +2770,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000538,
       "constellationName": "7X-X1Y",
-      "nx": 0.318,
-      "ny": 0.531
+      "nx": 0.441506,
+      "ny": 0.654696
     },
     {
       "id": 30003691,
@@ -2781,8 +2781,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000538,
       "constellationName": "7X-X1Y",
-      "nx": 0.319,
-      "ny": 0.539
+      "nx": 0.441506,
+      "ny": 0.681285
     },
     {
       "id": 30003692,
@@ -2792,8 +2792,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000538,
       "constellationName": "7X-X1Y",
-      "nx": 0.312,
-      "ny": 0.53
+      "nx": 0.414917,
+      "ny": 0.654696
     },
     {
       "id": 30003693,
@@ -2803,8 +2803,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000538,
       "constellationName": "7X-X1Y",
-      "nx": 0.307,
-      "ny": 0.537
+      "nx": 0.388329,
+      "ny": 0.681285
     },
     {
       "id": 30003694,
@@ -2814,8 +2814,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000538,
       "constellationName": "7X-X1Y",
-      "nx": 0.319,
-      "ny": 0.546
+      "nx": 0.441506,
+      "ny": 0.707873
     },
     {
       "id": 30003695,
@@ -2825,8 +2825,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000538,
       "constellationName": "7X-X1Y",
-      "nx": 0.313,
-      "ny": 0.538
+      "nx": 0.414917,
+      "ny": 0.681285
     },
     {
       "id": 30003696,
@@ -2836,8 +2836,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000538,
       "constellationName": "7X-X1Y",
-      "nx": 0.313,
-      "ny": 0.545
+      "nx": 0.414917,
+      "ny": 0.707873
     },
     {
       "id": 30003697,
@@ -2847,8 +2847,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000539,
       "constellationName": "VNX-P0",
-      "nx": 0.313,
-      "ny": 0.516
+      "nx": 0.308564,
+      "ny": 0.601519
     },
     {
       "id": 30003698,
@@ -2858,8 +2858,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000539,
       "constellationName": "VNX-P0",
-      "nx": 0.307,
-      "ny": 0.516
+      "nx": 0.281975,
+      "ny": 0.601519
     },
     {
       "id": 30003699,
@@ -2869,8 +2869,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000539,
       "constellationName": "VNX-P0",
-      "nx": 0.307,
-      "ny": 0.509
+      "nx": 0.255387,
+      "ny": 0.601519
     },
     {
       "id": 30003700,
@@ -2880,8 +2880,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000539,
       "constellationName": "VNX-P0",
-      "nx": 0.313059,
-      "ny": 0.523118
+      "nx": 0.308564,
+      "ny": 0.628108
     },
     {
       "id": 30003701,
@@ -2891,8 +2891,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000539,
       "constellationName": "VNX-P0",
-      "nx": 0.307,
-      "ny": 0.502
+      "nx": 0.228798,
+      "ny": 0.601519
     },
     {
       "id": 30003702,
@@ -2902,8 +2902,8 @@
       "regionColor": "#8957e5",
       "constellationId": 20000539,
       "constellationName": "VNX-P0",
-      "nx": 0.307,
-      "ny": 0.53
+      "nx": 0.228798,
+      "ny": 0.628108
     }
   ],
   "edges": [
